@@ -22,23 +22,16 @@ app.use(
 app.use(morgan("tiny"));
 
 // import all routes here
-const homeRoute = require("./routes/homeRoute");
 const userRoute = require("./routes/userRoute");
 const productRoute = require("./routes/productRoute");
 const paymentRoute = require("./routes/paymentRoute");
 const orderRoute = require("./routes/orderRoute");
 
 //  router middleware
-app.use("/api/v1", homeRoute);
 app.use("/api/v1", userRoute);
 app.use("/api/v1", productRoute);
 app.use("/api/v1", paymentRoute);
 app.use("/api/v1", orderRoute);
-
-// route for ejs
-app.get("/signuptest", (req, res) => {
-  res.render("signuptest");
-});
 
 // exporting app for index.js
 module.exports = app;

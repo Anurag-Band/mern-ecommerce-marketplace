@@ -4,7 +4,7 @@ const CustomError = require("../utils/customError");
 const cloudinary = require("cloudinary");
 const WhereClause = require("../utils/whereClause");
 
-// USER controllers
+// Product controllers
 exports.getAllProducts = BigPromise(async (req, res, next) => {
   const resultPerPage = 6;
   const totalProductsCount = await Product.countDocuments();
@@ -31,7 +31,7 @@ exports.getOneProduct = BigPromise(async (req, res, next) => {
   const product = await Product.findById(req.params.id);
 
   if (!product) {
-    return next(new CustomError("No Products Found related to the ID!!!", 401));
+    return next(new CustomError("No Products Found related to the ID!!!", 404));
   }
 
   res.status(200).json({
@@ -65,14 +65,32 @@ exports.addReview = BigPromise(async (req, res, next) => {
     });
   } else {
     product.reviews.push(review);
-    product.numOfReviews = product.review.length;
+    product.numOfReviews = product.reviews.length;
   }
+
+  let avg = 0;
+
+  product.reviews.forEach((rev) => {
+    avg += rev.rating;
+  });
+
+  product.ratings = avg / product.reviews.length;
+
+  await product.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    success: true,
+  });
 });
 
 exports.deleteReview = BigPromise(async (req, res, next) => {
   const { productId } = req.query;
 
   const product = await Product.findById(productId);
+
+  if (!product) {
+    return next(new CustomError("Product not Found", 404));
+  }
 
   const reviews = product.reviews.filter(
     (review) => review.user.toString() !== req.user._id.toString()

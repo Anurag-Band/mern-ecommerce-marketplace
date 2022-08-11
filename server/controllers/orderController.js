@@ -8,6 +8,7 @@ exports.createOrder = BigPromise(async (req, res, next) => {
     shippingInfo,
     orderItems,
     paymentInfo,
+    itemsAmount,
     taxAmount,
     shippingAmount,
     totalAmount,
@@ -17,6 +18,7 @@ exports.createOrder = BigPromise(async (req, res, next) => {
     shippingInfo,
     orderItems,
     paymentInfo,
+    itemsAmount,
     taxAmount,
     shippingAmount,
     totalAmount,
@@ -37,7 +39,7 @@ exports.getOneOrder = BigPromise(async (req, res, next) => {
 
   if (!order) {
     return next(
-      new CustomError("order not found related to the provided ID !!!", 401)
+      new CustomError("order not found related to the provided ID !!!", 404)
     );
   }
 
@@ -52,7 +54,7 @@ exports.getLoggedInUserOrders = BigPromise(async (req, res, next) => {
 
   if (!orders) {
     return next(
-      new CustomError("order not found related to the provided ID !!!", 401)
+      new CustomError("order not found related to the provided ID !!!", 404)
     );
   }
 
@@ -65,8 +67,15 @@ exports.getLoggedInUserOrders = BigPromise(async (req, res, next) => {
 exports.adminGetAllOrders = BigPromise(async (req, res, next) => {
   const orders = await Order.find();
 
+  let totalAmount = 0;
+
+  orders.forEach((order) => {
+    totalAmount += order.totalPrice;
+  });
+
   res.status(200).json({
     success: true,
+    totalAmount,
     orders,
   });
 });
@@ -74,21 +83,32 @@ exports.adminGetAllOrders = BigPromise(async (req, res, next) => {
 exports.adminUpdateOrder = BigPromise(async (req, res, next) => {
   const order = await Order.findById(req.params.id);
 
-  if (order.orderStatus === "Delivered") {
+  if (!order) {
     return next(
-      new CustomError("this order is already marked as Delivered!!!", 401)
+      new CustomError("order not found related to the provided ID !!!", 404)
     );
   }
 
-  if (req.body.orderStatus === "Delivered") {
+  if (order.orderStatus === "Delivered") {
+    return next(
+      new CustomError("this order is already marked as Delivered!!!", 400)
+    );
+  }
+
+  if (req.body.orderStatus === "Shipped") {
     order.orderStatus = req.body.orderStatus;
 
     order.orderItems.forEach(async (prod) => {
       await updateProductStock(prod.product, prod.quantity);
     });
-
-    await order.save();
   }
+
+  if (req.body.status === "Delivered") {
+    order.deliveredAt = Date.now();
+    order.orderStatus = req.body.orderStatus;
+  }
+
+  await order.save({ validateBeforeSave: false });
 
   res.status(200).json({
     success: true,
@@ -98,6 +118,10 @@ exports.adminUpdateOrder = BigPromise(async (req, res, next) => {
 
 exports.adminDeleteOrder = BigPromise(async (req, res, next) => {
   const order = await Order.findById(req.params.id);
+
+  if (!order) {
+    return next(new CustomError("Order not found with this Id", 404));
+  }
 
   await order.remove();
 

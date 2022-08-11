@@ -78,24 +78,41 @@ const orderSchema = new mongoose.Schema(
     paymentInfo: {
       id: {
         type: String,
+        required: true,
       },
+      status: {
+        type: String,
+        required: true,
+      },
+    },
+    paidAt: {
+      type: Date,
+      required: true,
+    },
+    itemsAmount: {
+      type: Number,
+      required: true,
+      default: 0,
     },
     taxAmount: {
       type: Number,
       required: true,
+      default: 0,
     },
     shippingAmount: {
       type: Number,
       required: true,
+      default: 0,
     },
     totalAmount: {
       type: Number,
       required: true,
+      default: 0,
     },
     orderStatus: {
       type: String,
       required: true,
-      default: "processing",
+      default: "Processing",
     },
     deliveredAt: {
       type: Date,

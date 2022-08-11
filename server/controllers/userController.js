@@ -35,7 +35,7 @@ exports.signup = BigPromise(async (req, res, next) => {
     },
   });
 
-  CookieToken(user, res);
+  CookieToken(user, 201, res);
 });
 
 exports.login = BigPromise(async (req, res, next) => {
@@ -51,15 +51,15 @@ exports.login = BigPromise(async (req, res, next) => {
     return next(new CustomError("User Not Found, Please Register!!!", 400));
   }
 
-  const isPasswordCorrect = await user.isValidatedPassword(password);
+  const isPasswordMatched = await user.comparePassword(password);
 
-  if (!isPasswordCorrect) {
+  if (!isPasswordMatched) {
     return next(
       new CustomError("Email or Password is Not Exist or Matching!!!", 400)
     );
   }
 
-  CookieToken(user, res);
+  CookieToken(user, 200, res);
 });
 
 exports.logout = BigPromise(async (req, res, next) => {
@@ -96,7 +96,7 @@ exports.forgotPassword = BigPromise(async (req, res, next) => {
   try {
     await emailHelper({
       toEmail: user.email,
-      subject: "DEV Tshirt Store - Password Reset Email",
+      subject: "DEV Ecommerce Store - Password Reset Email",
       message,
     });
 
@@ -117,13 +117,10 @@ exports.forgotPassword = BigPromise(async (req, res, next) => {
 exports.resetPassword = BigPromise(async (req, res, next) => {
   const token = req.params.token;
 
-  const encrypToken = await crypto
-    .createHash("sha256")
-    .update(token)
-    .digest("hex");
+  const encryptToken = crypto.createHash("sha256").update(token).digest("hex");
 
   const user = await User.findOne({
-    encrypToken,
+    encryptToken,
     forgotPasswordExpiry: { $gt: Date.now() },
   });
 
@@ -144,7 +141,7 @@ exports.resetPassword = BigPromise(async (req, res, next) => {
 
   await user.save();
 
-  CookieToken(user, res);
+  CookieToken(user, 200, res);
 });
 
 exports.getLoggedInUserDetails = BigPromise(async (req, res, next) => {
@@ -161,19 +158,21 @@ exports.updatePassword = BigPromise(async (req, res, next) => {
 
   const user = await User.findById(userId).select("+password");
 
-  const isOldPasswordCorrect = await user.isValidatedPassword(
-    req.body.oldPassword
-  );
+  const isOldPasswordMatched = await user.comparePassword(req.body.oldPassword);
 
-  if (!isOldPasswordCorrect) {
+  if (!isOldPasswordMatched) {
     return next(new CustomError("Old Password is not Correct!!!", 400));
+  }
+
+  if (req.body.newPassword !== req.body.confirmPassword) {
+    return next(new CustomError("password does not match", 400));
   }
 
   user.password = req.body.newPassword;
 
   await user.save();
 
-  CookieToken(user, res);
+  CookieToken(user, 201, res);
 });
 
 exports.updateUserDetails = BigPromise(async (req, res, next) => {
@@ -191,7 +190,7 @@ exports.updateUserDetails = BigPromise(async (req, res, next) => {
 
     const imageId = user.photo.public_id;
 
-    const resp = await cloudinary.v2.uploader.destroy(imageId);
+    await cloudinary.v2.uploader.destroy(imageId);
 
     const result = await cloudinary.v2.uploader.upload(
       req.files.photo.tempFilePath,
@@ -230,11 +229,17 @@ exports.adminAllUsers = BigPromise(async (req, res, next) => {
 });
 
 exports.adminGetOneUser = BigPromise(async (req, res, next) => {
-  const users = await User.findById(req.params.id);
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(
+      new CustomError(`User does not exist with Id: ${req.params.id}`, 401)
+    );
+  }
 
   res.status(200).json({
     success: true,
-    users,
+    user,
   });
 });
 

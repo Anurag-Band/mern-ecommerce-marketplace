@@ -17,16 +17,17 @@ const { isUserLoggedIn, customRole } = require("../middlewares/userMiddleware");
 
 // user Routes
 router.route("/products").get(getAllProducts);
-router.route("/products/:id").get(getOneProduct);
+router.route("/product/:id").get(getOneProduct);
 router
-  .route("/review")
-  .put(isUserLoggedIn, addReview)
+  .route("/reviews")
+  .get(getOnlyReviewsForOneProduct)
   .delete(isUserLoggedIn, deleteReview);
-router.route("/reviews").get(getOnlyReviewsForOneProduct);
+
+router.route("/review").put(isUserLoggedIn, addReview);
 
 // Admin ONLY Routes
 router
-  .route("/admin/product/add")
+  .route("/admin/product/new")
   .post(isUserLoggedIn, customRole("admin"), adminAddProduct);
 
 router

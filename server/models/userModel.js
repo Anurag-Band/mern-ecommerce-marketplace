@@ -12,6 +12,7 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Please provide a name"],
       maxlength: [40, "Name is too long (limit: 40-charecters)"],
+      minLength: [4, "Name should have more than 4 characters"],
     },
     email: {
       type: String,
@@ -57,7 +58,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // 3 ->> isValidatedPassword() -> validate password with passed on user password
-userSchema.methods.isValidatedPassword = async function (userSendPassword) {
+userSchema.methods.comparePassword = async function (userSendPassword) {
   return await bcrypt.compare(userSendPassword, this.password);
 };
 

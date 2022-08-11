@@ -31,15 +31,7 @@ const productSchema = new mongoose.Schema(
     ],
     category: {
       type: String,
-      required: [
-        true,
-        "please select category from- short-sleeves, long-sleeves, sweat-shirts, hoodies",
-      ],
-      enum: {
-        values: ["shortsleeves", "longsleeves", "sweatshirts", "hoodies"],
-        message:
-          "please select category ONLY from- short-sleeves, long-sleeves, sweat-shirts and hoodies",
-      },
+      required: [true, "please enter product category"],
     },
     brand: {
       type: String,
@@ -48,6 +40,8 @@ const productSchema = new mongoose.Schema(
     stock: {
       type: Number,
       required: [true, "please add a number in stock"],
+      maxLength: [4, "stock cannnot exceed 4 characters"],
+      default: 1,
     },
     // above fields are required ⤴️⤴️
     ratings: {

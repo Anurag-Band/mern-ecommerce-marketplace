@@ -1,4 +1,5 @@
-const CookieToken = (user, res) => {
+// Create Token and Saving in Cookies
+const CookieToken = (user, statusCode, res) => {
   const token = user.getJwtToken();
 
   const options = {
@@ -8,7 +9,7 @@ const CookieToken = (user, res) => {
     httpOnly: true,
   };
   user.password = undefined;
-  res.status(200).cookie("token", token, options).json({
+  res.status(statusCode).cookie("token", token, options).json({
     success: true,
     token,
     user,

@@ -22,11 +22,11 @@ const { isUserLoggedIn, customRole } = require("../middlewares/userMiddleware");
 router.route("/signup").post(signup);
 router.route("/login").post(login);
 router.route("/logout").get(logout);
-router.route("/forgotpassword").post(forgotPassword);
+router.route("/password/forgot").post(forgotPassword);
 router.route("/password/reset/:token").post(resetPassword);
-router.route("/userdashboard").get(isUserLoggedIn, getLoggedInUserDetails);
+router.route("/me").get(isUserLoggedIn, getLoggedInUserDetails);
 router.route("/password/update").post(isUserLoggedIn, updatePassword);
-router.route("/userdashboard/update").post(isUserLoggedIn, updateUserDetails);
+router.route("/me/update").post(isUserLoggedIn, updateUserDetails);
 
 // admin only routes
 router
