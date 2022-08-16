@@ -7,7 +7,9 @@ const fileUpload = require("express-fileupload");
 
 // regular middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  express.urlencoded({ extended: true, parameterLimit: 100000, limit: "500mb" })
+);
 
 // cookies and file middleware
 app.use(cookieParser());

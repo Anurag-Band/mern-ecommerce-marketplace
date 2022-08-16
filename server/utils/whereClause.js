@@ -27,15 +27,18 @@ class WhereClause {
   filter() {
     const copyQ = { ...this.bigQ };
 
-    delete copyQ["search"];
-    delete copyQ["page"];
-    delete copyQ["limit"];
+    // Removing some fields for category
+    const removeFields = ["search", "page", "limit"];
+
+    removeFields.forEach((key) => delete copyQ[key]);
+
+    // Filter For Price and Rating
 
     let stringOfCopyQ = JSON.stringify(copyQ);
 
     stringOfCopyQ = stringOfCopyQ.replace(
       /\b(gte|lte|gt|lt)\b/g,
-      (m) => `$${m}`
+      (key) => `$${key}`
     );
 
     const jsonOfCopyQ = JSON.parse(stringOfCopyQ);

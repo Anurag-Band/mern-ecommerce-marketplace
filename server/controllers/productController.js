@@ -6,7 +6,7 @@ const WhereClause = require("../utils/whereClause");
 
 // Product controllers
 exports.getAllProducts = BigPromise(async (req, res, next) => {
-  const resultPerPage = 6;
+  const resultPerPage = 8;
   const totalProductsCount = await Product.countDocuments();
 
   const productsObj = new WhereClause(Product.find(), req.query)
@@ -22,22 +22,28 @@ exports.getAllProducts = BigPromise(async (req, res, next) => {
   res.status(200).json({
     success: true,
     products,
+    resultPerPage,
     filteredProductsCount,
     totalProductsCount,
   });
 });
 
 exports.getOneProduct = BigPromise(async (req, res, next) => {
-  const product = await Product.findById(req.params.id);
+  try {
+    const product = await Product.findById(req.params.id);
 
-  if (!product) {
-    return next(new CustomError("No Products Found related to the ID!!!", 404));
+    if (!product) {
+      return next(
+        new CustomError("No Products Found related to the ID!!!", 404)
+      );
+    }
+    res.status(200).json({
+      success: true,
+      product,
+    });
+  } catch (error) {
+    console.log(error);
   }
-
-  res.status(200).json({
-    success: true,
-    product,
-  });
 });
 
 exports.addReview = BigPromise(async (req, res, next) => {
