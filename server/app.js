@@ -11,6 +11,11 @@ app.use(
   express.urlencoded({ extended: true, parameterLimit: 100000, limit: "500mb" })
 );
 
+//  middleware for getting ERROR response as JSON insted of HTML...
+const jsonErrorHandler = (err, req, res, next) => {
+  res.send({ status: err.status, error: err.message });
+};
+
 // cookies and file middleware
 app.use(cookieParser());
 app.use(
@@ -34,6 +39,9 @@ app.use("/api/v1", userRoute);
 app.use("/api/v1", productRoute);
 app.use("/api/v1", paymentRoute);
 app.use("/api/v1", orderRoute);
+
+// JSON middleware
+app.use(jsonErrorHandler);
 
 // exporting app for index.js
 module.exports = app;

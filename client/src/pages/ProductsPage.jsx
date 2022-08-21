@@ -6,14 +6,19 @@ import ProductCard from "../components/product/ProductCard";
 import { Pagination, Slider } from "@mui/material";
 import { useParams } from "react-router-dom";
 import FilterListIcon from "@mui/icons-material/FilterList";
+import { capitaliseFirstLetter } from "../utils/capitaliseFirstLetter";
 
 const categories = ["electronics", "books", "fashion"];
 
 const ProductsPage = () => {
   const dispatch = useDispatch();
-  const { products, resultPerPage, totalProductsCount, filteredProductsCount } =
-    useSelector((state) => state.product);
-
+  const {
+    products,
+    resultPerPage,
+    totalProductsCount,
+    filteredProductsCount,
+    errorMessage,
+  } = useSelector((state) => state.product);
   const { search } = useParams();
 
   const [price, setPrice] = useState([0, 2500]);
@@ -33,12 +38,15 @@ const ProductsPage = () => {
       <div className="container mx-auto flex relative">
         <div
           className={`${
-            toggleFilter ? "block absolute" : "hidden"
-          } lg:block w-[16rem] p-5 m-5 z-10 bg-white border-2 border-slate-300`}
+            toggleFilter ? "block absolute h-full" : "hidden"
+          } lg:block w-[16rem] py-5 px-8 m-4 z-10 bg-white border border-slate-300 space-y-3`}
         >
-          <h2>Filters</h2>
+          <h2 className="text-2xl font-bold font-primary text-slate-600">
+            Filters
+          </h2>
+          <hr />
           <div>
-            <h3>Price</h3>
+            <h3 className="text-xl font-medium text-slate-600 my-1">Price</h3>
             <Slider
               size="small"
               sx={{ width: "11rem" }}
@@ -52,22 +60,25 @@ const ProductsPage = () => {
               min={0}
               max={5000}
             />
-
-            <h2>Categories</h2>
-            <ul>
+            <hr />
+            <h3 className="text-xl font-medium text-slate-600 my-2">
+              Categories
+            </h3>
+            <ul className="mb-3">
               {categories.map((category) => (
                 <li
                   key={category}
-                  className="cursor-pointer"
+                  className="cursor-pointer text-base mb-1 text-slate-800"
                   onClick={() => setCategory(category)}
                 >
-                  {category}
+                  {capitaliseFirstLetter(category)}
                 </li>
               ))}
               <button onClick={() => setCategory("")}>See All</button>
             </ul>
+            <hr />
 
-            <h3>Ratings</h3>
+            <h3 className="text-xl font-medium text-slate-600 my-1">Ratings</h3>
             <Slider
               size="small"
               sx={{ width: "11rem" }}
@@ -80,6 +91,7 @@ const ProductsPage = () => {
               min={0}
               max={5}
             />
+            <hr />
           </div>
           <div
             className="min-h-full"
@@ -89,22 +101,22 @@ const ProductsPage = () => {
 
         {category && (
           <div className="w-full h-10 flex items-center justify-center cursor-pointer absolute">
-            <h2 className="flex items-center space-x-2 py-1 px-2 mt-2 text-2xl text-slate-600">
-              {category.slice(0, 1).toUpperCase() + category.slice(1)}
+            <h2 className="flex items-center space-x-2 py-1 px-2 mt-2 text-2xl md:text-3xl text-slate-600">
+              {capitaliseFirstLetter(category)}
             </h2>
           </div>
         )}
-        <div className="w-full h-10 flex lg:hidden items-center justify-end cursor-pointer absolute">
+        <button className="w-full h-10 flex lg:hidden items-center justify-end cursor-pointer absolute">
           <h2
             onClick={() => setToggleFilter((prev) => !prev)}
-            className="flex items-center space-x-2 py-1 px-2 mt-3 border-2 rounded-sm bg-blue-100 border-blue-400 active:bg-blue-300"
+            className="flex items-center space-x-2 py-1 px-2 mt-3 border-2 rounded-sm bg-blue-50 border-blue-300 active:bg-blue-200"
           >
-            <span className="text-lg text-slate-600">Filters</span>
+            <span className="text-lg font-medium text-slate-600">Filters</span>
             <FilterListIcon />
           </h2>
-        </div>
+        </button>
 
-        <div className="grid grid-cols-2 px-2 lg:px-8 my-14 sm:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 md:gap-12 xl:gap-20">
+        <div className="grid grid-cols-2 px-2 lg:px-8 my-14 sm:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 md:gap-12 xl:gap-14">
           {products &&
             products.map((product) => (
               <ProductCard key={product._id} product={product} />

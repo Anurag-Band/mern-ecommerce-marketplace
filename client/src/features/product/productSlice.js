@@ -1,11 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import Axios from "axios";
-
-export const STATUSES = Object.freeze({
-  IDLE: "idle",
-  ERROR: "error",
-  LOADING: "loading",
-});
+import axios from "axios";
+import { STATUSES } from "../../utils/STATUSES";
 
 const initialState = {
   products: [],
@@ -14,12 +9,14 @@ const initialState = {
   filteredProductsCount: 0,
   status: STATUSES.IDLE,
   productDetails: {},
+  errorMessage: "",
 };
 
 const productSlice = createSlice({
   name: "product",
   initialState,
   reducers: {
+    //  for fetchProducts
     setProducts(state, action) {
       state.products = action.payload;
     },
@@ -48,6 +45,7 @@ const productSlice = createSlice({
       })
       .addCase(fetchProductDetails.rejected, (state, action) => {
         state.status = STATUSES.ERROR;
+        state.errorMessage = action.payload.message;
       });
   },
 });
@@ -89,43 +87,7 @@ export const fetchAllProducts =
 export const fetchProductDetails = createAsyncThunk(
   "productDetails/fetch",
   async (id) => {
-    const { data } = await Axios.get(`/api/v1/product/${id}`);
+    const { data } = await axios.get(`/api/v1/product/${id}`);
     return data;
   }
 );
-
-//  for fetchAllProducts
-// .addCase(fetchAllProducts.pending, (state, action) => {
-//   state.status = STATUSES.LOADING;
-// })
-// .addCase(fetchAllProducts.fulfilled, (state, action) => {
-//   state.products = action.payload.products;
-//   state.totalProductsCount = action.payload.totalProductsCount;
-//   state.filteredProductsCount = action.payload.filteredProductsCount;
-//   state.status = STATUSES.IDLE;
-// })
-// .addCase(fetchAllProducts.rejected, (state, action) => {
-//   state.status = STATUSES.ERROR;
-// })
-
-// Thunks ->>
-
-// export const fetchAllProducts = createAsyncThunk(
-//   "products/fetch",
-//   async (
-//     search = "",
-//     currentPage = 1,
-//     price = [0, 75000],
-//     category,
-//     ratings = 0
-//   ) => {
-//     let link = `/api/v1/products?search=${search}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
-
-//     if (category) {
-//       link = `/api/v1/products?search=${search}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
-//     }
-
-//     const { data } = await Axios.get(link);
-//     return data;
-//   }
-// );

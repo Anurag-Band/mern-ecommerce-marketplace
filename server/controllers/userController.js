@@ -7,19 +7,25 @@ const emailHelper = require("../utils/emailHelper");
 const crypto = require("crypto");
 
 exports.signup = BigPromise(async (req, res, next) => {
-  if (!req.files) {
+  if (!req.body.photo) {
     return next(new CustomError("Photo is required for Signup!!!"));
   }
 
-  const { name, email, password } = req.body;
+  const { name, email, password, photo } = req.body;
 
   if (!name || !name || !password) {
     return next(new CustomError("All Fields are Mandatory!!!", 400));
   }
 
-  const file = req.files.photo;
+  const isUserAlreadyExist = await User.findOne({ email });
 
-  const result = await cloudinary.v2.uploader.upload(file.tempFilePath, {
+  if (isUserAlreadyExist) {
+    return next(
+      new CustomError("Email is Already Registered, Please Login!", 400)
+    );
+  }
+
+  const result = await cloudinary.v2.uploader.upload(photo, {
     folder: "users",
     width: 150,
     crop: "scale",

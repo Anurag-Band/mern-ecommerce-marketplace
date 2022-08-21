@@ -4,7 +4,8 @@ import ProductCard from "../components/product/ProductCard";
 import SaleCarousel from "../components/layout/SaleCarousel";
 import MetaData from "../components/layout/MetaData";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProducts, STATUSES } from "../features/product/productSlice";
+import { fetchAllProducts } from "../features/product/productSlice";
+import { STATUSES } from "../utils/STATUSES";
 
 const LandingPage = () => {
   const dispatch = useDispatch();
@@ -17,7 +18,7 @@ const LandingPage = () => {
     <div className="w-full">
       <MetaData title="cash N carry | The ONE N ONLY place to spend your Earnings..." />
       <SaleCarousel />
-      <h2 className="mt-4 lg:mt-20 xl:py-5 text-2xl lg:text-4xl font-medium lg:font-semibold font-primary text-center">
+      <h2 className="mt-4 lg:mt-14 xl:py-5 text-2xl lg:text-4xl font-medium lg:font-semibold font-primary text-center">
         Featured Products
       </h2>
       <div className="container mx-auto px-2 xl:px-16 my-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12 xl:gap-20">
