@@ -42,7 +42,7 @@ const LogInPage = () => {
   }, [dispatch, status, navigate, isAuthenticated]);
 
   return (
-    <section className="min-h-[80vh] bg-white">
+    <section className="min-h-[85vh] bg-white">
       <div className="container mx-auto px-5 xl:px-40 flex py-5">
         <div className="flex flex-col w-full sm:w-1/2 space-y-2 my-14 px-10">
           <h2 className="pb-5 text-2xl md:text-3xl font-primary">Login</h2>
@@ -50,9 +50,8 @@ const LogInPage = () => {
             className="flex flex-col space-y-4"
             onSubmit={handleLoginSubmit}
           >
-            <label className="text-base md:text-lg font-medium">
+            <label className="after:content-['*'] after:ml-0.5 after:text-red-500 after:text-lg after:font-bold text-base md:text-lg font-medium">
               Email Address
-              <span className="text-red-500 text-lg font-bold"> * </span>
             </label>
             <input
               type="email"
@@ -61,9 +60,8 @@ const LogInPage = () => {
               className="w-full md:w-[80%] focus:ring-0 rounded-sm "
               onChange={(e) => setEmail(e.target.value)}
             />
-            <label className="text-base md:text-lg font-medium">
+            <label className="after:content-['*'] after:ml-0.5 after:text-red-500 after:text-lg after:font-bold text-base md:text-lg font-medium">
               Password
-              <span className="text-red-500 text-lg font-bold"> * </span>
             </label>
             <input
               type="password"
@@ -72,6 +70,12 @@ const LogInPage = () => {
               className="w-full md:w-[80%] focus:ring-0 rounded-sm "
               onChange={(e) => setPassword(e.target.value)}
             />
+            <Link
+              to={"/"}
+              className="text-blue-500 text-sm md:text-lg font-medium cursor-pointer"
+            >
+              Forgot Password ?
+            </Link>
             {status === STATUSES.ERROR && (
               <h3 className="text-red-500 text-sm md:text-lg font-medium">
                 Error : {statusMessage}

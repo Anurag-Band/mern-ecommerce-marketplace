@@ -182,7 +182,7 @@ exports.updatePassword = BigPromise(async (req, res, next) => {
 });
 
 exports.updateUserDetails = BigPromise(async (req, res, next) => {
-  const { name, email } = req.body;
+  const { name, email, photo } = req.body;
   if (!name || !email) {
     return next(new CustomError("Email and Password are Required!!!"));
   }
@@ -191,21 +191,18 @@ exports.updateUserDetails = BigPromise(async (req, res, next) => {
     email,
   };
 
-  if (req.files) {
-    const user = await User.findById(res.user.id);
+  if (req.body.photo) {
+    const user = await User.findById(req.user.id);
 
     const imageId = user.photo.public_id;
 
     await cloudinary.v2.uploader.destroy(imageId);
 
-    const result = await cloudinary.v2.uploader.upload(
-      req.files.photo.tempFilePath,
-      {
-        folder: "users",
-        width: 150,
-        crop: "scale",
-      }
-    );
+    const result = await cloudinary.v2.uploader.upload(photo, {
+      folder: "users",
+      width: 150,
+      crop: "scale",
+    });
 
     newData.photo = {
       public_id: result.public_id,

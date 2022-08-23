@@ -3,23 +3,28 @@ import MetaData from "../components/layout/MetaData";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllProducts } from "../features/product/productSlice";
 import ProductCard from "../components/product/ProductCard";
-import { Pagination, Slider } from "@mui/material";
-import { useParams } from "react-router-dom";
+import { Pagination } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { capitaliseFirstLetter } from "../utils/capitaliseFirstLetter";
-
-const categories = ["electronics", "books", "fashion"];
+import { STATUSES } from "../utils/STATUSES";
+import Filters from "../components/product/Filters";
+import Loader from "../assets/loader.svg";
 
 const ProductsPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const {
     products,
     resultPerPage,
     totalProductsCount,
     filteredProductsCount,
-    errorMessage,
+    status,
   } = useSelector((state) => state.product);
   const { search } = useParams();
+  console.log(search);
+  console.log(filteredProductsCount);
+  console.log(status);
 
   const [price, setPrice] = useState([0, 2500]);
   const [ratings, setRatings] = useState(0);
@@ -33,71 +38,18 @@ const ProductsPage = () => {
   }, [dispatch, search, currentPage, price, category, ratings]);
 
   return (
-    <div className="min-h-screen w-full">
+    <div className="min-h-[80vh] w-full">
       <MetaData title="Explore Products" />
-      <div className="container mx-auto flex relative">
-        <div
-          className={`${
-            toggleFilter ? "block absolute h-full" : "hidden"
-          } lg:block w-[16rem] py-5 px-8 m-4 z-10 bg-white border border-slate-300 space-y-3`}
-        >
-          <h2 className="text-2xl font-bold font-primary text-slate-600">
-            Filters
-          </h2>
-          <hr />
-          <div>
-            <h3 className="text-xl font-medium text-slate-600 my-1">Price</h3>
-            <Slider
-              size="small"
-              sx={{ width: "11rem" }}
-              getAriaLabel={() => "Price Filter Slider"}
-              value={price}
-              onChange={(event, newValue) => setPrice(newValue)}
-              valueLabelDisplay="auto"
-              disableSwap
-              step={500}
-              marks
-              min={0}
-              max={5000}
-            />
-            <hr />
-            <h3 className="text-xl font-medium text-slate-600 my-2">
-              Categories
-            </h3>
-            <ul className="mb-3">
-              {categories.map((category) => (
-                <li
-                  key={category}
-                  className="cursor-pointer text-base mb-1 text-slate-800"
-                  onClick={() => setCategory(category)}
-                >
-                  {capitaliseFirstLetter(category)}
-                </li>
-              ))}
-              <button onClick={() => setCategory("")}>See All</button>
-            </ul>
-            <hr />
-
-            <h3 className="text-xl font-medium text-slate-600 my-1">Ratings</h3>
-            <Slider
-              size="small"
-              sx={{ width: "11rem" }}
-              aria-labelledby="continuous-slider"
-              value={ratings}
-              onChange={(e, newRating) => setRatings(newRating)}
-              valueLabelDisplay="auto"
-              step={1}
-              marks
-              min={0}
-              max={5}
-            />
-            <hr />
-          </div>
-          <div
-            className="min-h-full"
-            onClick={() => toggleFilter && setToggleFilter(false)}
-          />
-        </div>
+      <div className="container mx-auto flex relative min-h-[80vh]">
+        <Filters
+          toggleFilter={toggleFilter}
+          setToggleFilter={setToggleFilter}
+          setPrice={setPrice}
+          setRatings={setRatings}
+          setCategory={setCategory}
+          ratings={ratings}
+          price={price}
+        />
 
         {category && (
           <div className="w-full h-10 flex items-center justify-center cursor-pointer absolute">
@@ -115,13 +67,36 @@ const ProductsPage = () => {
             <FilterListIcon />
           </h2>
         </button>
-
-        <div className="grid grid-cols-2 px-2 lg:px-8 my-14 sm:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 md:gap-12 xl:gap-14">
-          {products &&
-            products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-        </div>
+        {status === STATUSES.IDLE ? (
+          filteredProductsCount === 0 ? (
+            <div className="flex flex-col justify-center items-center w-full space-y-5">
+              <h2 className="text-xl md:text-4xl font-medium">
+                No Products Found
+              </h2>
+              <h3 className="text-md md:text-lg text-slate-500">
+                This place seems to be lonely!
+              </h3>
+              <button
+                type="button"
+                onClick={() => navigate(-1)}
+                className="py-1 px-6 rounded-sm w-52 text-xl text-blue-600 border border-blue-500 hover:bg-blue-200 active:bg-blue-400 active:text-white cursor-pointer"
+              >
+                Go To Products
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 px-2 lg:px-8 my-14 sm:grid-cols-3 xl:grid-cols-4 gap-8 sm:gap-10 md:gap-12 xl:gap-14">
+              {products &&
+                products.map((product) => (
+                  <ProductCard key={product._id} product={product} />
+                ))}
+            </div>
+          )
+        ) : (
+          <div className="flex items-center justify-center w-full">
+            <img src={Loader} alt="Loading..." className="w-24 h-24" />
+          </div>
+        )}
       </div>
       <div className="w-full flex justify-center items-center my-7">
         {filteredProductsCount > resultPerPage && (

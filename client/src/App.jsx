@@ -13,7 +13,9 @@ import ProfilePage from "./pages/ProfilePage";
 import { loadUser } from "./features/auth/authSlice";
 import { useDispatch } from "react-redux";
 import ProtectedRoute from "./components/route/ProtectedRoute";
-import UpdateProfilePage from "./pages/UpdateProfilePage";
+import UpdatePassword from "./pages/UpdatePassword";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -38,11 +40,16 @@ const App = () => {
         {/* user routes */}
         <Route path="/auth/login" element={<LogInPage />} />
         <Route path="/auth/signup" element={<SignUpPage />} />
+        <Route path="/auth/password/forgot" element={<ForgotPasswordPage />} />
+        <Route
+          path="/auth/password/reset/:token"
+          element={<ResetPasswordPage />}
+        />
 
         {/* protected routes */}
         <Route element={<ProtectedRoute />}>
           <Route path="/account" element={<ProfilePage />} />
-          <Route path="/me/update" element={<UpdateProfilePage />} />
+          <Route path="/account/password/update" element={<UpdatePassword />} />
         </Route>
       </Routes>
 

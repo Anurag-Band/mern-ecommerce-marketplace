@@ -1,30 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../assets/logo.png";
 import MobileLogo from "../../assets/logo-mobile.png";
-import SearchIcon from "@mui/icons-material/Search";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { useDispatch, useSelector } from "react-redux";
 import { clearErrors, logoutUser } from "../../features/auth/authSlice";
 import { STATUSES } from "../../utils/STATUSES";
 import { unwrapResult } from "@reduxjs/toolkit";
+import Search from "../product/Search";
 
 const Navigation = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated, user, status } = useSelector((state) => state.auth);
-
-  const [search, setSearch] = useState("");
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (search.trim()) {
-      navigate(`/products/${search}`);
-    } else {
-      navigate(`/products`);
-    }
-  };
 
   const handleLogout = () => {
     dispatch(logoutUser())
@@ -53,18 +42,7 @@ const Navigation = () => {
             className="block lg:hidden w-12"
           />
         </Link>
-        <form onSubmit={handleSearchSubmit}>
-          <label className="relative hidden sm:flex items-center lg:w-96">
-            <SearchIcon className="absolute left-2 text-slate-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="search by product, category or collection"
-              className="px-10 py-3 focus:border focus:border-black bg-gray-200 focus:bg-white focus:ring-1 focus:ring-slate-500 text-slate-600 border-none text-sm rounded-sm w-full transition-all delay-100"
-            />
-          </label>
-        </form>
+        <Search />
         <div className="flex items-center space-x-7">
           <AddShoppingCartIcon className="cursor-pointer" />
           <FavoriteBorderIcon className="cursor-pointer" />
@@ -81,7 +59,7 @@ const Navigation = () => {
                   <img
                     src={user.photo.secure_url}
                     alt={user.name}
-                    className="object-fill"
+                    className="object-fill w-full h-full"
                   />
                 </div>
               </button>

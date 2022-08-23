@@ -48,7 +48,7 @@ const SignUpPage = () => {
       dispatch(registerUser(Object.fromEntries(formData)))
         .then(unwrapResult)
         .then((obj) => {
-          console.log({ signThen: obj });
+          console.log({ signupThen: obj });
           setName("");
           setEmail("");
           setPassword("");
@@ -70,7 +70,7 @@ const SignUpPage = () => {
   }, [dispatch, status, navigate, isAuthenticated]);
 
   return (
-    <section className="min-h-[80vh] bg-white">
+    <section className="min-h-[85vh] bg-white">
       <div className="container mx-auto px-5 xl:px-40 flex py-5">
         <div className="w-1/2 hidden sm:flex sm:items-center sm:justify-center">
           <img src={LoginBanner} alt="Login" />
@@ -83,20 +83,18 @@ const SignUpPage = () => {
             onSubmit={handleSignupSubmit}
             className="flex flex-col space-y-3"
           >
-            <label className="text-base md:text-lg font-medium">
+            <label className="after:content-['*'] after:ml-0.5 after:text-red-500 after:text-lg after:font-bold text-base md:text-lg font-medium">
               Full Name
-              <span className="text-red-500 text-lg font-bold"> * </span>
             </label>
             <input
               type="text"
               value={name}
               required
-              className="w-full md:w-[80%] focus:ring-0 rounded-sm "
+              className="w-full md:w-[80%] focus:ring-0 rounded-sm"
               onChange={(e) => setName(e.target.value)}
             />
-            <label className="text-base md:text-lg font-medium">
+            <label className="after:content-['*'] after:ml-0.5 after:text-red-500 after:text-lg after:font-bold text-base md:text-lg font-medium">
               Email Address
-              <span className="text-red-500 text-lg font-bold"> * </span>
             </label>
             <input
               type="email"
@@ -105,9 +103,8 @@ const SignUpPage = () => {
               className="w-full md:w-[80%] focus:ring-0 rounded-sm "
               onChange={(e) => setEmail(e.target.value)}
             />
-            <label className="text-base md:text-lg font-medium">
+            <label className="after:content-['*'] after:ml-0.5 after:text-red-500 after:text-lg after:font-bold text-base md:text-lg font-medium">
               Password
-              <span className="text-red-500 text-lg font-bold"> * </span>
             </label>
             <input
               type="password"
@@ -117,9 +114,8 @@ const SignUpPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <div className="flex flex-col">
-              <label className="text-base md:text-lg font-medium">
+              <label className="after:content-['*'] after:ml-0.5 after:text-red-500 after:text-lg after:font-bold text-base md:text-lg font-medium">
                 Profile Photo
-                <span className="text-red-500 text-lg font-bold"> * </span>
               </label>
               <div className="flex items-center space-x-5 xl:space-x-10">
                 <div className="flex items-center justify-center w-16 h-16 overflow-hidden rounded-full bg-gray-100">

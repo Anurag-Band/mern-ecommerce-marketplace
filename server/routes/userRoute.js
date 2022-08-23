@@ -23,10 +23,10 @@ router.route("/signup").post(signup);
 router.route("/login").post(login);
 router.route("/logout").get(logout);
 router.route("/password/forgot").post(forgotPassword);
-router.route("/password/reset/:token").post(resetPassword);
+router.route("/password/reset/:token").put(resetPassword);
 router.route("/me").get(isUserLoggedIn, getLoggedInUserDetails);
-router.route("/password/update").post(isUserLoggedIn, updatePassword);
-router.route("/me/update").post(isUserLoggedIn, updateUserDetails);
+router.route("/password/update").put(isUserLoggedIn, updatePassword);
+router.route("/me/update").put(isUserLoggedIn, updateUserDetails);
 
 // admin only routes
 router

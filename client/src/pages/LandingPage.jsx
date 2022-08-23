@@ -6,6 +6,7 @@ import MetaData from "../components/layout/MetaData";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllProducts } from "../features/product/productSlice";
 import { STATUSES } from "../utils/STATUSES";
+import Loader from "../assets/loader.svg";
 
 const LandingPage = () => {
   const dispatch = useDispatch();
@@ -21,17 +22,17 @@ const LandingPage = () => {
       <h2 className="mt-4 lg:mt-14 xl:py-5 text-2xl lg:text-4xl font-medium lg:font-semibold font-primary text-center">
         Featured Products
       </h2>
-      <div className="container mx-auto px-2 xl:px-16 my-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12 xl:gap-20">
-        {status === STATUSES.LOADING ? (
-          <h1>Loading...</h1>
-        ) : (
-          <>
-            {products.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </>
-        )}
-      </div>
+      {status === STATUSES.LOADING ? (
+        <div className="flex items-center justify-center w-full min-h-[60vh]">
+          <img src={Loader} alt="Loading..." className="w-24 h-24" />
+        </div>
+      ) : (
+        <div className="container mx-auto px-2 xl:px-16 my-10 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-12 xl:gap-20">
+          {products.map((product) => (
+            <ProductCard key={product._id} product={product} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
