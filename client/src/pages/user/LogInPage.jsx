@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import LoginBanner from "../assets/login-banner.jpg";
+import LoginBanner from "../../assets/login-banner.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { clearErrors, loginUser } from "../features/auth/authSlice";
+import { clearErrors, loginUser } from "../../features/auth/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { STATUSES } from "../utils/STATUSES";
-import Loader from "../assets/loader.svg";
+import { STATUSES } from "../../utils/STATUSES";
+import Loader from "../../assets/loader.svg";
 
 const LogInPage = () => {
   const dispatch = useDispatch();

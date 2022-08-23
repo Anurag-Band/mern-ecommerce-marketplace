@@ -7,8 +7,8 @@ import {
   loadUser,
   updatePassword,
   updateReset,
-} from "../features/auth/authSlice";
-import { STATUSES } from "../utils/STATUSES";
+} from "../../features/auth/authSlice";
+import { STATUSES } from "../../utils/STATUSES";
 
 const UpdatePassword = () => {
   const navigate = useNavigate();

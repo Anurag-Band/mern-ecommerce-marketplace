@@ -5,11 +5,11 @@ import {
   loadUser,
   updateProfile,
   updateReset,
-} from "../features/auth/authSlice";
-import { STATUSES } from "../utils/STATUSES";
+} from "../../features/auth/authSlice";
+import { STATUSES } from "../../utils/STATUSES";
 import EditIcon from "@mui/icons-material/Edit";
 import { unwrapResult } from "@reduxjs/toolkit";
-import Loader from "../assets/loader.svg";
+import Loader from "../../assets/loader.svg";
 import { Link } from "react-router-dom";
 
 const ProfilePage = () => {

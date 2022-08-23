@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchProductDetails } from "../features/product/productSlice";
-import { STATUSES } from "../utils/STATUSES";
+import { fetchProductDetails } from "../../features/product/productSlice";
+import { STATUSES } from "../../utils/STATUSES";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();

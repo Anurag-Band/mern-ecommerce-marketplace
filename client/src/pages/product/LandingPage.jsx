@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import ProductCard from "../components/product/ProductCard";
+import ProductCard from "../../components/product/ProductCard";
 // import { product } from "../assets/demoproduct";
-import SaleCarousel from "../components/layout/SaleCarousel";
-import MetaData from "../components/layout/MetaData";
+import SaleCarousel from "../../components/layout/SaleCarousel";
+import MetaData from "../../components/layout/MetaData";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProducts } from "../features/product/productSlice";
-import { STATUSES } from "../utils/STATUSES";
-import Loader from "../assets/loader.svg";
+import { fetchAllProducts } from "../../features/product/productSlice";
+import { STATUSES } from "../../utils/STATUSES";
+import Loader from "../../assets/loader.svg";
 
 const LandingPage = () => {
   const dispatch = useDispatch();

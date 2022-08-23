@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import LoginBanner from "../assets/login-banner.jpg";
-import { clearErrors, registerUser } from "../features/auth/authSlice";
+import LoginBanner from "../../assets/login-banner.jpg";
+import { clearErrors, registerUser } from "../../features/auth/authSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
-import { STATUSES } from "../utils/STATUSES";
-import Loader from "../assets/loader.svg";
+import { STATUSES } from "../../utils/STATUSES";
+import Loader from "../../assets/loader.svg";
 
 const SignUpPage = () => {
   const filePickerRef = useRef(null);

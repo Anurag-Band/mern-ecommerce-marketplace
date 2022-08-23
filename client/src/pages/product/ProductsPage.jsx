@@ -1,30 +1,22 @@
 import React, { useEffect, useState } from "react";
-import MetaData from "../components/layout/MetaData";
+import MetaData from "../../components/layout/MetaData";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllProducts } from "../features/product/productSlice";
-import ProductCard from "../components/product/ProductCard";
+import { fetchAllProducts } from "../../features/product/productSlice";
+import ProductCard from "../../components/product/ProductCard";
 import { Pagination } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import { capitaliseFirstLetter } from "../utils/capitaliseFirstLetter";
-import { STATUSES } from "../utils/STATUSES";
-import Filters from "../components/product/Filters";
-import Loader from "../assets/loader.svg";
+import { capitaliseFirstLetter } from "../../utils/capitaliseFirstLetter";
+import { STATUSES } from "../../utils/STATUSES";
+import Filters from "../../components/product/Filters";
+import Loader from "../../assets/loader.svg";
 
 const ProductsPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const {
-    products,
-    resultPerPage,
-    totalProductsCount,
-    filteredProductsCount,
-    status,
-  } = useSelector((state) => state.product);
+  const { products, resultPerPage, filteredProductsCount, status } =
+    useSelector((state) => state.product);
   const { search } = useParams();
-  console.log(search);
-  console.log(filteredProductsCount);
-  console.log(status);
 
   const [price, setPrice] = useState([0, 2500]);
   const [ratings, setRatings] = useState(0);
