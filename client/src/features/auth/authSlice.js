@@ -8,6 +8,7 @@ const initialState = {
   status: STATUSES.IDLE,
   statusMessage: null,
   isUpdated: false,
+  errorMessage: null,
 };
 
 const authSlice = createSlice({
@@ -36,6 +37,30 @@ const authSlice = createSlice({
       .addCase(logoutUser.rejected, (state) => {
         state.status = STATUSES.ERROR;
       })
+
+      // for forgotPassword->>
+      .addMatcher(
+        isAnyOf(forgotPassword.pending, resetPassword.pending),
+        (state, action) => {
+          state.status = STATUSES.LOADING;
+          state.errorMessage = null;
+        }
+      )
+      .addMatcher(
+        isAnyOf(forgotPassword.fulfilled, resetPassword.fulfilled),
+        (state, action) => {
+          state.status = STATUSES.IDLE;
+          state.errorMessage = action.payload.error;
+          state.statusMessage = action.payload.message;
+        }
+      )
+      .addMatcher(
+        isAnyOf(forgotPassword.rejected, resetPassword.rejected),
+        (state, action) => {
+          state.status = STATUSES.ERROR;
+          state.statusMessage = action.payload.error;
+        }
+      )
 
       // for updateProfile, updatePassword ->>
       .addMatcher(
@@ -201,6 +226,48 @@ export const updatePassword = createAsyncThunk(
       const { data } = await axios.put(
         "/api/v1/password/update",
         formObject,
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// for forgotPassword ->>
+export const forgotPassword = createAsyncThunk(
+  "user/password/forgot",
+  async ({ email }, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: { "Content-Type": "application/json" },
+      };
+
+      const { data } = await axios.post(
+        "/api/v1/password/forgot",
+        { email },
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// for resetPassword ->>
+export const resetPassword = createAsyncThunk(
+  "user/password/reset",
+  async ({ password, confirmPassword, token }, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: { "Content-Type": "application/json" },
+      };
+
+      const { data } = await axios.put(
+        `/api/v1/password/reset/${token}`,
+        { password, confirmPassword },
         config
       );
       return data;

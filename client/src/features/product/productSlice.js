@@ -10,6 +10,9 @@ const initialState = {
   status: STATUSES.IDLE,
   productDetails: {},
   errorMessage: "",
+  reviewSuccess: null,
+  productReviews: [],
+  isReviewDeleted: false,
 };
 
 const productSlice = createSlice({
@@ -32,6 +35,9 @@ const productSlice = createSlice({
     setStatus(state, action) {
       state.status = action.payload;
     },
+    deleteReset: (state) => {
+      state.isReviewDeleted = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -46,6 +52,50 @@ const productSlice = createSlice({
       .addCase(fetchProductDetails.rejected, (state, action) => {
         state.status = STATUSES.ERROR;
         state.errorMessage = action.payload.message;
+      })
+
+      //  for addReview
+      .addCase(addReview.pending, (state, action) => {
+        state.status = STATUSES.LOADING;
+      })
+      .addCase(addReview.fulfilled, (state, action) => {
+        state.status = STATUSES.IDLE;
+        state.reviewSuccess = action.payload.success;
+        state.errorMessage = action.payload.error;
+      })
+      .addCase(addReview.rejected, (state, action) => {
+        state.status = STATUSES.ERROR;
+        state.errorMessage = action.payload.error;
+        state.reviewSuccess = false;
+      })
+
+      //  for fetchSingleProductReviews
+      .addCase(fetchSingleProductReviews.pending, (state) => {
+        state.status = STATUSES.LOADING;
+      })
+      .addCase(fetchSingleProductReviews.fulfilled, (state, action) => {
+        state.productReviews = action.payload.reviews;
+        state.status = STATUSES.IDLE;
+        state.errorMessage = action.payload.error;
+      })
+      .addCase(fetchSingleProductReviews.rejected, (state, action) => {
+        state.status = STATUSES.ERROR;
+        state.errorMessage = action.payload.error;
+      })
+
+      // for deleteReview->>
+      .addCase(deleteReview.pending, (state) => {
+        state.status = STATUSES.LOADING;
+      })
+      .addCase(deleteReview.fulfilled, (state, action) => {
+        state.status = STATUSES.IDLE;
+        state.statusMessage = action.payload.message;
+        state.isReviewDeleted = true;
+      })
+      .addCase(deleteReview.rejected, (state, action) => {
+        state.status = STATUSES.ERROR;
+        state.statusMessage = action.payload.error;
+        state.isReviewDeleted = false;
       });
   },
 });
@@ -56,9 +106,11 @@ export const {
   setTotalProductsCount,
   setFilteredProductsCount,
   setStatus,
+  deleteReset,
 } = productSlice.actions;
 export default productSlice.reducer;
 
+// for fetchAllProducts ->>
 export const fetchAllProducts =
   (search = "", currentPage = 1, price = [0, 5000], category, ratings = 0) =>
   async (dispatch) => {
@@ -84,10 +136,60 @@ export const fetchAllProducts =
     }
   };
 
+// for fetchProductDetails ->>
 export const fetchProductDetails = createAsyncThunk(
   "productDetails/fetch",
   async (id) => {
     const { data } = await axios.get(`/api/v1/product/${id}`);
     return data;
+  }
+);
+
+// for addReview ->>
+export const addReview = createAsyncThunk(
+  "user/review/add",
+  async ({ rating, comment, productId }, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: { "Content-Type": "application/json" },
+      };
+
+      const { data } = await axios.put(
+        "/api/v1/review",
+        { rating, comment, productId },
+        config
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// for fetchSingleProductReviews ->>
+export const fetchSingleProductReviews = createAsyncThunk(
+  "singleProductReviews/fetch",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/reviews?id=${productId}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// for deleteReview ->>
+export const deleteReview = createAsyncThunk(
+  "review/delete",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(
+        `/api/v1/reviews?productId=${productId}`
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   }
 );

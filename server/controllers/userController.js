@@ -82,22 +82,22 @@ exports.logout = BigPromise(async (req, res, next) => {
 
 exports.forgotPassword = BigPromise(async (req, res, next) => {
   const { email } = req.body;
-
+  console.log(email);
   const user = await User.findOne({ email });
 
   if (!user) {
-    return next(new CustomError("User does not Existes, Please Register!!!"));
+    return next(
+      new CustomError("User does not Existes, Please Register!!!", 401)
+    );
   }
 
   const forgotToken = await user.getForgotPasswordToken();
 
   await user.save({ validateBeforeSave: false });
 
-  const myUrl = `${req.protocol}://${req.get(
-    "host"
-  )}/api/v1/password/reset/${forgotToken}`;
+  const myUrl = `${req.protocol}://localhost:3770/auth/password/reset/${forgotToken}`;
 
-  const message = `Copy paste this link in your URL and hit enter \n\n ${myUrl}`;
+  const message = `Copy paste this link in your URL and hit enter \n\n ${myUrl} \n\n If you have not requested this email then, please ignore it.`;
 
   try {
     await emailHelper({
@@ -108,7 +108,7 @@ exports.forgotPassword = BigPromise(async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: "Email Sent Successfully!!!",
+      message: "Verification Link sent to your Email Successfully",
     });
   } catch (error) {
     user.forgotPasswordToken = undefined;

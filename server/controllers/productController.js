@@ -102,15 +102,21 @@ exports.deleteReview = BigPromise(async (req, res, next) => {
     (review) => review.user.toString() !== req.user._id.toString()
   );
 
-  product.numOfReviews = reviews.length;
-
   // adjust ratings
+  let avg = 0;
 
-  const ratings =
-    numOfReviews === 0
-      ? 0
-      : reviews.reduce((acc, item) => acc + item.rating, 0) /
-        product.numOfReviews;
+  reviews.forEach((rev) => {
+    avg += rev.rating;
+  });
+
+  let ratings = 0;
+
+  if (reviews.length === 0) {
+    ratings = 0;
+  } else {
+    ratings = avg / reviews.length;
+  }
+  const numOfReviews = reviews.length;
 
   await Product.findByIdAndUpdate(
     productId,
@@ -133,7 +139,10 @@ exports.deleteReview = BigPromise(async (req, res, next) => {
 });
 
 exports.getOnlyReviewsForOneProduct = BigPromise(async (req, res, next) => {
-  const product = await Product.findById(req.query.id);
+  const product = await Product.findById(req.query.id).populate(
+    "reviews.user",
+    "photo"
+  );
 
   res.status(200).json({
     success: true,

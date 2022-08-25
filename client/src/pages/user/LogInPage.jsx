@@ -57,7 +57,7 @@ const LogInPage = () => {
               type="email"
               value={email}
               required
-              className="w-full md:w-[80%] focus:ring-0 rounded-sm "
+              className="w-full md:w-[80%] focus:ring-0 rounded-sm"
               onChange={(e) => setEmail(e.target.value)}
             />
             <label className="after:content-['*'] after:ml-0.5 after:text-red-500 after:text-lg after:font-bold text-base md:text-lg font-medium">
@@ -71,7 +71,7 @@ const LogInPage = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
             <Link
-              to={"/"}
+              to={"/auth/password/forgot"}
               className="text-blue-500 text-sm md:text-lg font-medium cursor-pointer"
             >
               Forgot Password ?

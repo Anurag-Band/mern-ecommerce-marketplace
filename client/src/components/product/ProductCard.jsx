@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
         </p>
         <div className="flex items-center space-x-1">
           <Rating
-            size="small"
+            size="medium"
             value={product.ratings}
             readOnly={true}
             precision={0.5}
