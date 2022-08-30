@@ -33,12 +33,14 @@ const userRoute = require("./routes/userRoute");
 const productRoute = require("./routes/productRoute");
 const paymentRoute = require("./routes/paymentRoute");
 const orderRoute = require("./routes/orderRoute");
+const cartRoute = require("./routes/cartRoute");
 
 //  router middleware
 app.use("/api/v1", userRoute);
 app.use("/api/v1", productRoute);
 app.use("/api/v1", paymentRoute);
 app.use("/api/v1", orderRoute);
+app.use("/api/v1", cartRoute);
 
 // JSON middleware
 app.use(jsonErrorHandler);
