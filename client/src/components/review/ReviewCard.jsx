@@ -8,7 +8,7 @@ import { unwrapResult } from "@reduxjs/toolkit";
 
 const ReviewCard = ({ review, productId }) => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { user, isAuthenticated } = useSelector((state) => state.auth);
 
   const handleDeleteReview = () => {
     dispatch(deleteReview(productId))
@@ -24,7 +24,7 @@ const ReviewCard = ({ review, productId }) => {
         alt={review.name}
         className="w-20 h-20 object-cover rounded-full"
       />
-      {user._id === review.user._id && (
+      {isAuthenticated && user._id === review.user._id && (
         <Tooltip
           onClick={handleDeleteReview}
           title="Delete Review"

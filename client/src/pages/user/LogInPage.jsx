@@ -31,15 +31,20 @@ const LogInPage = () => {
     }
   };
 
+  // eslint-disable-next-line no-restricted-globals
+  const redirect = location.search
+    ? // eslint-disable-next-line no-restricted-globals
+      `/${location.search.split("=")[1]}`
+    : "/account";
+
   useEffect(() => {
     if (status === STATUSES.ERROR) {
       setTimeout(() => dispatch(clearErrors()), 3000);
     }
-
     if (isAuthenticated) {
-      navigate("/account");
+      navigate(redirect);
     }
-  }, [dispatch, status, navigate, isAuthenticated]);
+  }, [dispatch, redirect, status, navigate, isAuthenticated]);
 
   return (
     <section className="min-h-[85vh] bg-white">

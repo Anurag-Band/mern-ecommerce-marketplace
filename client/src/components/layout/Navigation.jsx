@@ -44,7 +44,9 @@ const Navigation = () => {
         </Link>
         <Search />
         <div className="flex items-center space-x-7">
-          <AddShoppingCartIcon className="cursor-pointer" />
+          <Link to={"/cart"}>
+            <AddShoppingCartIcon className="cursor-pointer" />
+          </Link>
           <FavoriteBorderIcon className="cursor-pointer" />
           <Link
             to={"/products"}

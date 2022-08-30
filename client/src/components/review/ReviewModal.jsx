@@ -38,7 +38,7 @@ const ReviewModal = ({ open, handleClose, productId, reFetchReviews }) => {
         handleClose();
         setRating(0);
         setComment("");
-        reFetchReviews();
+        // reFetchReviews();
       })
       .catch((obj) => console.log({ addReviewCatch: obj }));
   };

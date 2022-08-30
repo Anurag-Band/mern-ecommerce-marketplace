@@ -6,6 +6,11 @@ import {
   fetchProductDetails,
   fetchSingleProductReviews,
 } from "../../features/product/productSlice";
+import {
+  addToCart,
+  decreaseCartItemQuantity,
+} from "../../features/cart/cartSlice";
+
 import { STATUSES } from "../../utils/STATUSES";
 import Loader from "../../assets/loader.svg";
 import Rating from "@mui/material/Rating";
@@ -14,7 +19,7 @@ import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ProductCarousal from "../../components/product/ProductCarousal";
 import ReviewModal from "../../components/review/ReviewModal";
-import ReviewCard from "../../components/review/ReviewCard";
+import UserReviews from "../../components/review/UserReviews";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -23,23 +28,24 @@ const ProductDetailsPage = () => {
   const {
     productDetails: product,
     status,
-    productReviews,
     isReviewDeleted,
   } = useSelector((state) => state.product);
+  const itemId = product._id;
   const [quantity, setQuantity] = useState(1);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  useEffect(() => {
-    dispatch(fetchProductDetails(id));
-  }, [id, dispatch]);
+  const handleAddToCart = () => {
+    dispatch(addToCart(itemId));
+  };
 
   const handleIncreaseQuantity = () => {
     if (quantity >= product.stock) return;
 
     const qty = quantity + 1;
     setQuantity(qty);
+    dispatch(addToCart(itemId));
   };
 
   const handleDecreaseQuantity = () => {
@@ -47,7 +53,12 @@ const ProductDetailsPage = () => {
 
     const qty = quantity - 1;
     setQuantity(qty);
+    dispatch(decreaseCartItemQuantity(itemId));
   };
+
+  useEffect(() => {
+    dispatch(fetchProductDetails(id));
+  }, [id, dispatch]);
 
   useEffect(() => {
     if (!product) {
@@ -61,10 +72,6 @@ const ProductDetailsPage = () => {
       dispatch(deleteReset());
     }
   }, [navigate, product, dispatch, id, isReviewDeleted]);
-
-  const reFetchReviews = () => {
-    dispatch(fetchSingleProductReviews(id));
-  };
 
   useEffect(() => {
     window.scrollTo({
@@ -112,11 +119,15 @@ const ProductDetailsPage = () => {
             </div>
             <div className="flex mt-4 items-center pb-5 border-b-2 border-gray-200 mb-5">
               <div className="flex items-center gap-4">
-                <button onClick={handleIncreaseQuantity}>
+                <button type="button" onClick={handleIncreaseQuantity}>
                   <AddCircleIcon fontSize="large" className="text-red-500" />
                 </button>
                 <span className="text-xl font-semibold">{quantity}</span>
-                <button onClick={handleDecreaseQuantity}>
+                <button
+                  disabled={quantity === 1}
+                  type="button"
+                  onClick={handleDecreaseQuantity}
+                >
                   <RemoveCircleIcon fontSize="large" className="text-red-500" />
                 </button>
               </div>
@@ -125,7 +136,11 @@ const ProductDetailsPage = () => {
               <span className="title-font font-medium text-2xl text-gray-900">
                 {`$ ${product.price}`}
               </span>
-              <button className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded-3xl">
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="flex ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded-3xl"
+              >
                 Add to Card
               </button>
               <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
@@ -148,38 +163,9 @@ const ProductDetailsPage = () => {
             </button>
           </div>
         </div>
-        {/* User Review Section */}
-        <section className="container px-5 py-5 mx-auto mt-10">
-          <div className="lg:w-4/5 mx-auto">
-            <h2 className="text-center text-2xl lg:text-4xl font-semibold tracking-widest">
-              Reviews
-            </h2>
-            <hr className="my-4 bg-slate-200 p-[0.4px]" />
-            <div className="flex flex-wrap gap-2 md:gap-4 mx-auto">
-              {productReviews.length > 0 ? (
-                productReviews?.map((review) => (
-                  <ReviewCard
-                    key={review._id}
-                    review={review}
-                    productId={product._id}
-                  />
-                ))
-              ) : (
-                <div className="flex items-center justify-center min-h-[40vh] w-full">
-                  <h2 className="text-lg md:text-2xl font-medium text-slate-400 tracking-widest">
-                    Nothing to Show, Be the First One to Review
-                  </h2>
-                </div>
-              )}
-            </div>
-          </div>
-        </section>
-        <ReviewModal
-          open={open}
-          handleClose={handleClose}
-          productId={id}
-          reFetchReviews={reFetchReviews}
-        />
+        {/* User Reviews Section */}
+        <UserReviews productId={product._id} />
+        <ReviewModal open={open} handleClose={handleClose} productId={id} />
       </div>
     </main>
   );

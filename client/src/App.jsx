@@ -16,6 +16,8 @@ import ProtectedRoute from "./components/route/ProtectedRoute";
 import UpdatePassword from "./pages/user/UpdatePassword";
 import ResetPasswordPage from "./pages/user/ResetPasswordPage";
 import ForgotPasswordPage from "./pages/user/ForgotPasswordPage";
+import CartPage from "./pages/product/CartPage";
+import CheckoutStepsPage from "./pages/order/CheckoutStepsPage";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -25,10 +27,10 @@ const App = () => {
   }, [dispatch]);
 
   return (
-    <main className="bg-gray-50 font-secondary relative">
+    <main className="bg-sky-50 font-secondary relative">
       <Notification />
       <Navigation />
-      <section className="min-h-[85vh]">
+      <main className="min-h-[85vh]">
         <Routes>
           {/* product routes */}
           {/* <Route path="*" element={<h1>404 - N0T FOUND</h1>} /> */}
@@ -56,9 +58,12 @@ const App = () => {
               path="/account/password/update"
               element={<UpdatePassword />}
             />
+            {/* cart route */}
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/shipping" element={<CheckoutStepsPage />} />
           </Route>
         </Routes>
-      </section>
+      </main>
 
       <Footer />
     </main>
