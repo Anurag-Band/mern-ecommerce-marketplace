@@ -19,6 +19,7 @@ exports.getSingleUserCart = BigPromise(async (req, res, next) => {
   } else {
     res.status(200).json({
       status: "cart is Empty",
+      cart,
     });
   }
 });

@@ -16,6 +16,7 @@ exports.captureStripePayment = BigPromise(async (req, res, next) => {
     //optional
     metadata: {
       integration_check: "accept_a_payment",
+      company: "cash N carry",
     },
   });
 

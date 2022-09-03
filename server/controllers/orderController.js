@@ -22,6 +22,7 @@ exports.createOrder = BigPromise(async (req, res, next) => {
     taxAmount,
     shippingAmount,
     totalAmount,
+    paidAt: Date.now(),
     user: req.user._id,
   });
 
