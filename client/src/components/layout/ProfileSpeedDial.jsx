@@ -76,7 +76,7 @@ const ProfileSpeedDial = () => {
 
       <SpeedDial
         ariaLabel="SpeedDial controlled open"
-        sx={{ position: "absolute", top: 40, right: 50 }}
+        sx={{ position: "absolute", top: 30, right: 60 }}
         icon={
           <img
             className="rounded-full object-fill"

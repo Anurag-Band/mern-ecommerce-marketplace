@@ -28,12 +28,12 @@ exports.createOrder = BigPromise(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
-    order,
+    message: "order created successfully",
   });
 });
 
 exports.getOneOrder = BigPromise(async (req, res, next) => {
-  const order = await Order.findById(req.params.id).populate(
+  const order = await Order.findById(req.query.id).populate(
     "user",
     "name email"
   );

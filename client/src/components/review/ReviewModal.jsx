@@ -21,7 +21,7 @@ const style = {
   borderRadius: "5px",
 };
 
-const ReviewModal = ({ open, handleClose, productId, reFetchReviews }) => {
+const ReviewModal = ({ open, handleClose, productId }) => {
   const dispatch = useDispatch();
   const { statusMessage, status, isAuthenticated } = useSelector(
     (state) => state.auth
@@ -38,7 +38,6 @@ const ReviewModal = ({ open, handleClose, productId, reFetchReviews }) => {
         handleClose();
         setRating(0);
         setComment("");
-        // reFetchReviews();
       })
       .catch((obj) => console.log({ addReviewCatch: obj }));
   };

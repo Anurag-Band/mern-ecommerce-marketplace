@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -18,9 +19,9 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ProductCarousal from "../../components/product/ProductCarousal";
-import ReviewModal from "../../components/review/ReviewModal";
-import UserReviews from "../../components/review/UserReviews";
 import { unwrapResult } from "@reduxjs/toolkit";
+import ReviewCard from "../../components/review/ReviewCard";
+import ReviewModal from "../../components/review/ReviewModal";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -35,7 +36,10 @@ const ProductDetailsPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    reFetchUserReviews();
+    setOpen(false);
+  };
 
   const handleAddToCart = () => {
     dispatch(addToCart(itemId))
@@ -71,6 +75,23 @@ const ProductDetailsPage = () => {
       })
       .catch((obj) => console.log({ decreaseQtyCatch: obj }));
   };
+
+  const productReviews = useSelector((state) => state.product.productReviews);
+
+  useEffect(() => {
+    reFetchUserReviews();
+  }, []);
+
+  async function reFetchUserReviews() {
+    dispatch(fetchSingleProductReviews(id))
+      .then(unwrapResult)
+      .then((obj) => {
+        console.log({ UserReviewsThen: obj });
+      })
+      .catch((obj) => {
+        console.log({ UserReviewsCatch: obj });
+      });
+  }
 
   useEffect(() => {
     dispatch(fetchProductDetails(id));
@@ -163,6 +184,21 @@ const ProductDetailsPage = () => {
                 <FavoriteIcon />
               </button>
             </div>
+            <hr className="bg-slate-200 p-[0.4px]" />
+            <p className="my-3 leading-relaxed text-sm lg:text-base">
+              <span className="text-lg lg:text-xl font-semibold mr-2">
+                Status :
+              </span>
+              {product.stock > 0 ? (
+                <span className="font-medium text-lg lg:text-xl text-green-500">
+                  InStock
+                </span>
+              ) : (
+                <span className="font-medium text-lg lg:text-xl text-red-500">
+                  OutOfStock
+                </span>
+              )}
+            </p>
             <hr className="my-2 bg-slate-200 p-[0.4px]" />
             <p className="leading-relaxed text-sm lg:text-base">
               <span className="text-xl lg:text-xl font-semibold mr-2">
@@ -180,8 +216,28 @@ const ProductDetailsPage = () => {
           </div>
         </div>
         {/* User Reviews Section */}
-        <UserReviews productId={product._id} />
-        <ReviewModal open={open} handleClose={handleClose} productId={id} />
+        <section className="container px-5 py-5 mx-auto mt-10">
+          <div className="lg:w-4/5 mx-auto">
+            <h2 className="text-center text-2xl lg:text-4xl font-semibold tracking-widest">
+              Reviews
+            </h2>
+            <hr className="my-4 bg-slate-200 p-[0.4px]" />
+            <div className="flex flex-wrap gap-2 md:gap-4 mx-auto">
+              {productReviews.length > 0 ? (
+                productReviews?.map((review) => (
+                  <ReviewCard key={review._id} review={review} productId={id} />
+                ))
+              ) : (
+                <div className="flex items-center justify-center min-h-[40vh] w-full">
+                  <h2 className="text-lg md:text-2xl font-medium text-slate-400 tracking-widest">
+                    Nothing to Show, Be the First One to Review
+                  </h2>
+                </div>
+              )}
+            </div>
+            <ReviewModal open={open} handleClose={handleClose} productId={id} />
+          </div>
+        </section>
       </div>
     </main>
   );

@@ -8,9 +8,10 @@ const initialState = {
   shippingInfo: localStorage.getItem(SHIPPING_INFO)
     ? JSON.parse(localStorage.getItem(SHIPPING_INFO))
     : {},
-  order: {},
   status: STATUSES.IDLE,
   message: null,
+  orders: [],
+  orderDetails: {},
 };
 
 const orderSlice = createSlice({
@@ -28,14 +29,41 @@ const orderSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // for createOrder ->>
       .addCase(createOrder.pending, (state) => {
         state.status = STATUSES.LOADING;
       })
       .addCase(createOrder.fulfilled, (state, action) => {
         state.status = STATUSES.IDLE;
-        state.order = action.payload.order;
+        state.message = action.payload.message;
       })
       .addCase(createOrder.rejected, (state, action) => {
+        state.status = STATUSES.ERROR;
+        state.message = action.payload.error;
+      })
+
+      // for fetchMyOrders ->>
+      .addCase(fetchMyOrders.pending, (state) => {
+        state.status = STATUSES.LOADING;
+      })
+      .addCase(fetchMyOrders.fulfilled, (state, action) => {
+        state.status = STATUSES.IDLE;
+        state.orders = action.payload.orders;
+      })
+      .addCase(fetchMyOrders.rejected, (state, action) => {
+        state.status = STATUSES.ERROR;
+        state.message = action.payload.error;
+      })
+
+      // for fetchOrderDetails ->>
+      .addCase(fetchOrderDetails.pending, (state) => {
+        state.status = STATUSES.LOADING;
+      })
+      .addCase(fetchOrderDetails.fulfilled, (state, action) => {
+        state.status = STATUSES.IDLE;
+        state.orderDetails = action.payload.order;
+      })
+      .addCase(fetchOrderDetails.rejected, (state, action) => {
         state.status = STATUSES.ERROR;
         state.message = action.payload.error;
       });
@@ -45,6 +73,7 @@ const orderSlice = createSlice({
 export const { setShippingInfo, clearErrors } = orderSlice.actions;
 export default orderSlice.reducer;
 
+// for createOrder ->>
 export const createOrder = createAsyncThunk(
   "order/create",
   async ({ order }, { rejectWithValue }) => {
@@ -54,6 +83,34 @@ export const createOrder = createAsyncThunk(
       };
 
       const { data } = await axios.post("/api/v1/order/new", order, config);
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
+// for fetchMyOrders ->>
+export const fetchMyOrders = createAsyncThunk(
+  "myorders/fetch",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/myorders`);
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
+// for fetchOrderDetails ->>
+export const fetchOrderDetails = createAsyncThunk(
+  "order/details/fetch",
+  async (orderId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/order/?id=${orderId}`);
 
       return data;
     } catch (error) {

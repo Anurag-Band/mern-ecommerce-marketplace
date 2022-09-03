@@ -14,7 +14,7 @@ const { isUserLoggedIn, customRole } = require("../middlewares/userMiddleware");
 
 // user Routes
 router.route("/order/new").post(isUserLoggedIn, createOrder);
-router.route("/order/:id").get(isUserLoggedIn, getOneOrder);
+router.route("/order").get(isUserLoggedIn, getOneOrder);
 router.route("/myorders").get(isUserLoggedIn, getLoggedInUserOrders);
 
 // admin ONLY Routes
