@@ -1,3 +1,27 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}
+
+@layer components {
+  .custom-input {
+    @apply mt-1 pl-10 px-10 py-3 bg-white border shadow-sm border-slate-300 placeholder-slate-500 text-slate-500 text-lg focus:outline-none focus:border-slate-500 focus:ring-slate-400 block w-full rounded-sm sm:text-sm focus:ring-1;
+  }
+  .custom-input-icon {
+    @apply absolute top-4 left-3 mr-4 text-slate-500;
+  }
+
+  .custom-payment-input {
+    @apply mt-1 pl-10 w-80 py-4 bg-white border shadow-sm border-slate-300  text-slate-500 text-lg focus:outline-none focus:border-slate-500 focus:ring-slate-400 block rounded-sm sm:text-sm focus:ring-1;
+  }
+  .custom-payment-input-icon {
+    @apply absolute mt-1 top-3 left-3 text-slate-500;
+  }
+}

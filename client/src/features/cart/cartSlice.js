@@ -48,9 +48,8 @@ const cartSlice = createSlice({
           decreaseCartItemQuantity.fulfilled
         ),
         (state, action) => {
-          console.log(action.payload);
           state.status = STATUSES.IDLE;
-          state.statusMessage = action.payload;
+          state.statusMessage = action.payload.error;
         }
       )
       .addMatcher(
@@ -83,11 +82,10 @@ export const addToCart = createAsyncThunk(
       const config = { headers: { "Content-Type": "application/json" } };
 
       const { data } = await axios.post(`/api/v1/cart`, { itemId }, config);
-      console.log(data);
+
       return data;
     } catch (error) {
-      console.log(error);
-      return rejectWithValue(error);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -95,17 +93,25 @@ export const addToCart = createAsyncThunk(
 // for removeFromCart ->>
 export const removeFromCart = createAsyncThunk(
   "cartItems/remove",
-  async (itemId) => {
-    const { data } = await axios.delete(`/api/v1/cart?itemId=${itemId}`);
-    return data;
+  async (itemId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(`/api/v1/cart?itemId=${itemId}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
 );
 
 // for decreaseCartItemQuantity ->>
 export const decreaseCartItemQuantity = createAsyncThunk(
   "cartItems/decreaseItemQuantity",
-  async (itemId) => {
-    const { data } = await axios.put(`/api/v1/cart?itemId=${itemId}`);
-    return data;
+  async (itemId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.put(`/api/v1/cart?itemId=${itemId}`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
   }
 );

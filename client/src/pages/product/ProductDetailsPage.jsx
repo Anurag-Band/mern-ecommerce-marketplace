@@ -20,6 +20,7 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import ProductCarousal from "../../components/product/ProductCarousal";
 import ReviewModal from "../../components/review/ReviewModal";
 import UserReviews from "../../components/review/UserReviews";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -37,7 +38,12 @@ const ProductDetailsPage = () => {
   const handleClose = () => setOpen(false);
 
   const handleAddToCart = () => {
-    dispatch(addToCart(itemId));
+    dispatch(addToCart(itemId))
+      .then(unwrapResult)
+      .then((obj) => {
+        console.log({ addToCartThen: obj });
+      })
+      .catch((obj) => console.log({ addToCartCatch: obj }));
   };
 
   const handleIncreaseQuantity = () => {
@@ -45,7 +51,12 @@ const ProductDetailsPage = () => {
 
     const qty = quantity + 1;
     setQuantity(qty);
-    dispatch(addToCart(itemId));
+    dispatch(addToCart(itemId))
+      .then(unwrapResult)
+      .then((obj) => {
+        console.log({ addToCartThen: obj });
+      })
+      .catch((obj) => console.log({ addToCartCatch: obj }));
   };
 
   const handleDecreaseQuantity = () => {
@@ -53,7 +64,12 @@ const ProductDetailsPage = () => {
 
     const qty = quantity - 1;
     setQuantity(qty);
-    dispatch(decreaseCartItemQuantity(itemId));
+    dispatch(decreaseCartItemQuantity(itemId))
+      .then(unwrapResult)
+      .then((obj) => {
+        console.log({ decreaseQtyThen: obj });
+      })
+      .catch((obj) => console.log({ decreaseQtyCatch: obj }));
   };
 
   useEffect(() => {

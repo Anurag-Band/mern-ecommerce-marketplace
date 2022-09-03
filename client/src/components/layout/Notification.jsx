@@ -5,6 +5,7 @@ import LocalOfferIcon from "@mui/icons-material/LocalOffer";
 import PhoneInTalkIcon from "@mui/icons-material/PhoneInTalk";
 import NotListedLocationIcon from "@mui/icons-material/NotListedLocation";
 import InfoIcon from "@mui/icons-material/Info";
+import { Link } from "react-router-dom";
 
 const Notification = () => {
   return (
@@ -29,9 +30,9 @@ const Notification = () => {
           <h2 className="cursor-pointer">
             <InfoIcon /> <span> About Us</span>
           </h2>
-          <h2 className="cursor-pointer">
+          <Link to={"/myorders"} className="cursor-pointer">
             <NotListedLocationIcon /> <span> Track Order</span>
-          </h2>
+          </Link>
         </div>
       </nav>
     </header>

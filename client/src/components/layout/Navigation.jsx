@@ -74,7 +74,7 @@ const Navigation = () => {
                   My Profile
                 </Link>
                 <Link
-                  to={"/account"}
+                  to={"/myorders"}
                   className="px-5 py-2 hover:bg-gray-200 cursor-pointer text-center"
                 >
                   My Orders

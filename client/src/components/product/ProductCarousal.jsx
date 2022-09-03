@@ -4,7 +4,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 const ProductCarousal = ({ photos }) => {
   return (
-    <Carousel autoPlay infiniteLoop interval={2500} width={"90%"}>
+    <Carousel autoPlay infiniteLoop interval={2500}>
       {photos.map((photo, idx) => (
         <div key={idx}>
           <img
