@@ -51,11 +51,8 @@ const MyOrdersPage = () => {
       headerName: "Status",
       minWidth: 100,
       flex: 0.3,
-      cellClassName: (params) => {
-        return params.getValue(params.id, "status") === "Delivered"
-          ? "greenColor"
-          : "redColor";
-      },
+      cellClassName: (params) =>
+        params.row.status === "Delivered" ? "greenColor" : "redColor",
     },
     {
       field: "itemQty",
@@ -104,15 +101,15 @@ const MyOrdersPage = () => {
 
   return (
     <div className="w-full h-screen flex flex-col">
-      <h2 className="text-4xl md:text-3xl flex justify-center items-center px-10 font-semibold text-slate-600 h-[10vh]">
+      <h2 className="text-2xl lg:text-4xl flex justify-center items-center p-10 font-semibold text-slate-600 h-[10vh]">
         My Orders
       </h2>
-      <div className="flex w-full h-full">
-        <div className="w-[50%]">
+      <div className="flex flex-col lg:flex-row w-full h-full space-y-5">
+        <div className="w-full lg:w-[50%] min-h-[40vh] lg:h-[89vh]">
           <DataGrid rows={rows} columns={columns} />
         </div>
 
-        <div className="w-[50%]">
+        <div className="w-full lg:w-[50%]">
           {orderDetails &&
             orderDetails._id &&
             (status === STATUSES.LOADING ? (

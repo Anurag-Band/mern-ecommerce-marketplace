@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCartItems } from "../../features/cart/cartSlice";
@@ -13,6 +14,7 @@ import {
   removeFromCart,
 } from "../../features/cart/cartSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { ToastContainer, toast } from "react-toastify";
 
 const CartPage = () => {
   const navigate = useNavigate();
@@ -55,7 +57,12 @@ const CartPage = () => {
   };
 
   const handleCheckout = () => {
-    navigate("/auth/login?redirect=shipping");
+    cartItems.length === 0
+      ? toast.dark("Cart is Empty!", {
+          position: "bottom-center",
+          autoClose: 3000,
+        })
+      : navigate("/auth/login?redirect=shipping");
   };
 
   useEffect(() => {
@@ -74,6 +81,7 @@ const CartPage = () => {
       <CustomNavigateTo location={"/products"} />
       <div className="lg:w-4/5 mx-auto flex relative gap-2">
         <div className="flex flex-col w-3/4">
+          <ToastContainer />
           {cartItems &&
             cartItems.map((item) => (
               <div

@@ -25,6 +25,7 @@ import { Elements } from "@stripe/react-stripe-js";
 import PaymentSuccessPage from "./pages/orderCheckout/PaymentSuccessPage";
 import MyOrdersPage from "./pages/orderCheckout/MyOrdersPage";
 import OrderDetailsPage from "./pages/orderCheckout/OrderDetailsPage";
+import { injectStyle } from "react-toastify/dist/inject-style";
 
 const App = () => {
   const [stripeApiKey, setStripeApiKey] = useState("");
@@ -37,6 +38,8 @@ const App = () => {
 
   useEffect(() => {
     store.dispatch(loadUser());
+
+    injectStyle();
 
     getStripeApiKey();
   }, []);
