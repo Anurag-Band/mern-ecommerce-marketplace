@@ -33,10 +33,9 @@ exports.createOrder = BigPromise(async (req, res, next) => {
 });
 
 exports.getOneOrder = BigPromise(async (req, res, next) => {
-  const order = await Order.findById(req.query.id).populate(
-    "user",
-    "name email"
-  );
+  const order = await Order.findById(req.query.id)
+    .populate("user", "name email")
+    .populate("orderItems.itemId", "photos");
 
   if (!order) {
     return next(
@@ -51,7 +50,10 @@ exports.getOneOrder = BigPromise(async (req, res, next) => {
 });
 
 exports.getLoggedInUserOrders = BigPromise(async (req, res, next) => {
-  const orders = await Order.find({ user: req.user._id });
+  const orders = await Order.find({ user: req.user._id }).populate(
+    "orderItems.itemId",
+    "photos"
+  );
 
   if (!orders) {
     return next(
