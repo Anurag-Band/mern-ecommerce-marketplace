@@ -73,7 +73,7 @@ exports.adminGetAllOrders = BigPromise(async (req, res, next) => {
   let totalAmount = 0;
 
   orders.forEach((order) => {
-    totalAmount += order.totalPrice;
+    totalAmount += order.totalAmount;
   });
 
   res.status(200).json({

@@ -150,6 +150,23 @@ exports.getOnlyReviewsForOneProduct = BigPromise(async (req, res, next) => {
   });
 });
 
+// ADMIN Get All Reviews of a product
+exports.adminGetProductReviews = BigPromise(async (req, res, next) => {
+  const product = await Product.findById(req.query.id).populate(
+    "reviews.user",
+    "name"
+  );
+
+  if (!product) {
+    return next(new CustomError("No Products Found related to the ID!!!", 404));
+  }
+
+  res.status(200).json({
+    success: true,
+    reviews: product.reviews,
+  });
+});
+
 // admin ONLY controllers
 exports.adminAddProduct = BigPromise(async (req, res, next) => {
   const imageArray = [];
@@ -261,9 +278,7 @@ exports.adminDeleteOneProduct = BigPromise(async (req, res, next) => {
   }
 
   for (let i = 0; i < product.photos.length; i++) {
-    const res = await cloudinary.v2.uploader.destroy(
-      product.photos[i].public_id
-    );
+    await cloudinary.v2.uploader.destroy(product.photos[i].public_id);
   }
 
   product.remove();
