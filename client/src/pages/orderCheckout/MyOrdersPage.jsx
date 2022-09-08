@@ -33,8 +33,8 @@ const MyOrdersPage = () => {
     orders.forEach((order) =>
       rows.push({
         id: order._id,
-        itemQty: order.orderItems.length,
         status: order.orderStatus,
+        itemQty: order.orderItems.length,
         amount: order.totalAmount,
       })
     );

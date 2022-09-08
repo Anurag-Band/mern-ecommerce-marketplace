@@ -67,6 +67,14 @@ const Navigation = () => {
               </button>
 
               <div className="hidden peer-hover:flex peer-hover:flex-col hover:flex hover:flex-col w-[150px] flex-col bg-white drop-shadow-lg absolute top-9 right-5 text-md font-medium rounded-md">
+                {isAuthenticated && user.role === "admin" && (
+                  <Link
+                    to={"/admin/dashboard"}
+                    className="px-5 py-2 hover:bg-gray-200 cursor-pointer text-center"
+                  >
+                    Dashboard
+                  </Link>
+                )}
                 <Link
                   to={"/account"}
                   className="px-5 py-2 hover:bg-gray-200 cursor-pointer text-center"

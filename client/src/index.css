@@ -29,4 +29,31 @@
   .redColor {
     @apply text-red-500;
   }
+  .admin-sidebar-tab {
+    @apply flex items-center px-4 lg:px-7 py-4 ml-2 mr-1 space-x-3 text-[2vw] xl:text-[1vw] font-medium text-slate-700 hover:bg-slate-100 hover:border-l-4 hover:border-[#770063] hover:text-[#99007f] hover:font-semibold;
+  }
+  .dashboard-card {
+    @apply px-3 py-5 m-5 w-[25vw] lg:w-[15vw] h-[25vw] lg:h-[15vw] bg-white mx-auto rounded-sm flex flex-col items-center justify-center space-y-5 lg:space-y-[1.5vw];
+  }
+  .dashboard-icon {
+    @apply w-[7vw] lg:w-[4vw] h-[7vw] lg:h-[4vw] object-contain;
+  }
+  .admin-dashboard-header {
+    @apply bg-purple-200 text-xl font-semibold text-purple-600;
+  }
+  .outOfStock {
+    @apply bg-red-100 font-semibold text-red-500;
+  }
+  .orderProcessing {
+    @apply font-medium text-yellow-500;
+  }
+  .orderDelivered {
+    @apply font-medium text-green-500;
+  }
+  .pri-cell {
+    @apply font-semibold;
+  }
+  .sec-cell {
+    @apply font-medium text-slate-600;
+  }
 }

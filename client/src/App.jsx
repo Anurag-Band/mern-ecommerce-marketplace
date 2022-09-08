@@ -26,6 +26,13 @@ import PaymentSuccessPage from "./pages/orderCheckout/PaymentSuccessPage";
 import MyOrdersPage from "./pages/orderCheckout/MyOrdersPage";
 import OrderDetailsPage from "./pages/orderCheckout/OrderDetailsPage";
 import { injectStyle } from "react-toastify/dist/inject-style";
+import AdminLayout from "./pages/layout/AdminLayout";
+import AdminProtectedRoute from "./components/route/AdminProtectedRoute";
+import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
+import AdminProductsPage from "./pages/admin/AdminProductsPage";
+import AdminOrdersPage from "./pages/admin/AdminOrdersPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
+import AdminReviewsPage from "./pages/admin/AdminReviewsPage";
 
 const App = () => {
   const [stripeApiKey, setStripeApiKey] = useState("");
@@ -47,9 +54,10 @@ const App = () => {
   return (
     <main className="bg-slate-50 font-secondary relative">
       <Routes>
-        {/* product routes */}
+        {/* App Layout */}
         <Route element={<WebLayout />}>
           <Route path="/" element={<LandingPage />} />
+          {/* product routes */}
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/products/:search" element={<ProductsPage />} />
           <Route path="/product/:id" element={<ProductDetailsPage />} />
@@ -66,7 +74,7 @@ const App = () => {
             element={<ResetPasswordPage />}
           />
 
-          {/* protected routes */}
+          {/* USER protected routes */}
           <Route element={<ProtectedRoute />}>
             <Route path="/account" element={<ProfilePage />} />
             <Route
@@ -76,12 +84,14 @@ const App = () => {
           </Route>
         </Route>
 
+        {/* App Layout */}
         <Route element={<AppLayout />}>
           {/* protected routes */}
           <Route element={<ProtectedRoute />}>
             {/* cart route */}
             <Route path="/cart" element={<CartPage />} />
             <Route path="/shipping" element={<ShippingInfoPage />} />
+            {/* order & payment routes */}
             <Route path="/myorders" element={<MyOrdersPage />} />
             {stripeApiKey && (
               <Route
@@ -96,6 +106,22 @@ const App = () => {
             <Route path="/payment/success" element={<PaymentSuccessPage />} />
             <Route path="/order/confirm" element={<ConfirmOrderPage />} />
             <Route path="/order/:id" element={<OrderDetailsPage />} />
+          </Route>
+        </Route>
+
+        {/* Admin Layout */}
+        <Route element={<AdminLayout />}>
+          {/* ONLY Admin routes */}
+          <Route element={<AdminProtectedRoute />}>
+            <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+            <Route path="/admin/products" element={<AdminProductsPage />} />
+            <Route path="/admin/orders" element={<AdminOrdersPage />} />
+            <Route path="/admin/users" element={<AdminUsersPage />} />
+            <Route
+              path="/admin/reviews/:productId"
+              element={<AdminReviewsPage />}
+            />
+            <Route path="/admin/reviews" element={<AdminReviewsPage />} />
           </Route>
         </Route>
       </Routes>

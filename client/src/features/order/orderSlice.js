@@ -12,6 +12,9 @@ const initialState = {
   message: null,
   orders: [],
   orderDetails: {},
+  // ADMIN states ->>
+  allOrders: null,
+  totalRevenue: null,
 };
 
 const orderSlice = createSlice({
@@ -66,6 +69,16 @@ const orderSlice = createSlice({
       .addCase(fetchOrderDetails.rejected, (state, action) => {
         state.status = STATUSES.ERROR;
         state.message = action.payload.error;
+      })
+
+      // ADMIN Reducers ->>
+
+      //  for adminGetAllOrders
+
+      .addCase(adminGetAllOrders.fulfilled, (state, action) => {
+        state.allOrders = action.payload.orders;
+        state.totalRevenue = action.payload.totalAmount;
+        state.status = STATUSES.IDLE;
       });
   },
 });
@@ -111,6 +124,22 @@ export const fetchOrderDetails = createAsyncThunk(
   async (orderId, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(`/api/v1/order/?id=${orderId}`);
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
+// ADMIN Thunks ->>
+
+// for adminGetAllOrders ->>
+export const adminGetAllOrders = createAsyncThunk(
+  "admin/orders/fetch",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/admin/orders`);
 
       return data;
     } catch (error) {

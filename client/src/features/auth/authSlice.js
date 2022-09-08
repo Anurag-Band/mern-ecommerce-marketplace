@@ -9,6 +9,8 @@ const initialState = {
   statusMessage: null,
   isUpdated: false,
   errorMessage: null,
+  // ADMIN states ->>
+  allUsers: null,
 };
 
 const authSlice = createSlice({
@@ -36,6 +38,15 @@ const authSlice = createSlice({
       })
       .addCase(logoutUser.rejected, (state) => {
         state.status = STATUSES.ERROR;
+      })
+
+      // ADMIN Reducers ->>
+
+      //  for adminGetAllUsers
+
+      .addCase(adminGetAllUsers.fulfilled, (state, action) => {
+        state.allUsers = action.payload.users;
+        state.status = STATUSES.IDLE;
       })
 
       // for forgotPassword->>
@@ -273,6 +284,22 @@ export const resetPassword = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(error);
+    }
+  }
+);
+
+// ADMIN Thunks ->>
+
+// for adminGetAllUsers ->>
+export const adminGetAllUsers = createAsyncThunk(
+  "admin/users/fetch",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/admin/users`);
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
     }
   }
 );

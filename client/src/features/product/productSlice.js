@@ -13,6 +13,9 @@ const initialState = {
   reviewSuccess: null,
   productReviews: [],
   isReviewDeleted: false,
+  // ADMIN states ->>
+  allProducts: null,
+  allReviews: null,
 };
 
 const productSlice = createSlice({
@@ -96,6 +99,40 @@ const productSlice = createSlice({
         state.status = STATUSES.ERROR;
         state.statusMessage = action.payload.error;
         state.isReviewDeleted = false;
+      })
+
+      // ADMIN Reducers ->>
+
+      //  for adminGetAllProducts
+      .addCase(adminGetAllProducts.fulfilled, (state, action) => {
+        state.allProducts = action.payload.products;
+        state.status = STATUSES.IDLE;
+      })
+
+      //  for adminGetProductReviews
+      .addCase(adminGetProductReviews.pending, (state) => {
+        state.status = STATUSES.LOADING;
+      })
+      .addCase(adminGetProductReviews.fulfilled, (state, action) => {
+        state.allReviews = action.payload.reviews;
+        state.status = STATUSES.IDLE;
+      })
+      .addCase(adminGetProductReviews.rejected, (state, action) => {
+        state.status = STATUSES.ERROR;
+        state.statusMessage = action.payload.error;
+      })
+
+      //  for adminDeleteProduct
+      .addCase(adminDeleteProduct.pending, (state) => {
+        state.status = STATUSES.LOADING;
+      })
+      .addCase(adminDeleteProduct.fulfilled, (state, action) => {
+        state.statusMessage = action.payload.message;
+        state.status = STATUSES.IDLE;
+      })
+      .addCase(adminDeleteProduct.rejected, (state, action) => {
+        state.status = STATUSES.ERROR;
+        state.statusMessage = action.payload.error;
       });
   },
 });
@@ -190,6 +227,49 @@ export const deleteReview = createAsyncThunk(
       return data;
     } catch (error) {
       return rejectWithValue(error);
+    }
+  }
+);
+
+// ADMIN Thunks ->>
+
+// adminGetAllProducts ->>
+export const adminGetAllProducts = createAsyncThunk(
+  "admin/products/fetch",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/admin/products`);
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+// for adminGetOneReview ->>
+export const adminGetProductReviews = createAsyncThunk(
+  "admin/review/fetch",
+  async (productId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.get(`/api/v1/review?id=${productId}`);
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
+// for adminDeleteProduct ->>
+export const adminDeleteProduct = createAsyncThunk(
+  "admin/product/delete",
+  async (id, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(`/api/v1/admin/product/${id}`);
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
     }
   }
 );
