@@ -11,6 +11,7 @@ const initialState = {
   errorMessage: null,
   // ADMIN states ->>
   allUsers: null,
+  isDeleted: false,
 };
 
 const authSlice = createSlice({
@@ -23,6 +24,9 @@ const authSlice = createSlice({
     },
     updateReset: (state) => {
       state.isUpdated = false;
+    },
+    deleteReset: (state) => {
+      state.isDeleted = false;
     },
   },
   extraReducers: (builder) => {
@@ -47,6 +51,21 @@ const authSlice = createSlice({
       .addCase(adminGetAllUsers.fulfilled, (state, action) => {
         state.allUsers = action.payload.users;
         state.status = STATUSES.IDLE;
+      })
+
+      // for adminDeleteUser ->>
+      .addCase(adminDeleteUser.pending, (state) => {
+        state.status = STATUSES.LOADING;
+      })
+      .addCase(adminDeleteUser.fulfilled, (state, action) => {
+        state.isDeleted = true;
+        state.statusMessage = action.payload.message;
+        state.status = STATUSES.IDLE;
+      })
+      .addCase(adminDeleteUser.rejected, (state, action) => {
+        state.status = STATUSES.ERROR;
+        state.isDeleted = false;
+        state.statusMessage = action.payload.message;
       })
 
       // for forgotPassword->>
@@ -119,9 +138,8 @@ const authSlice = createSlice({
       )
       .addMatcher(
         isAnyOf(loginUser.rejected, registerUser.rejected, loadUser.rejected),
-        (state, action) => {
+        (state) => {
           state.status = STATUSES.ERROR;
-          state.statusMessage = action.payload.error;
           state.user = null;
           state.isAuthenticated = false;
         }
@@ -129,7 +147,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearErrors, updateReset } = authSlice.actions;
+export const { clearErrors, updateReset, deleteReset } = authSlice.actions;
 export default authSlice.reducer;
 
 // for loginUser ->>
@@ -296,6 +314,20 @@ export const adminGetAllUsers = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await axios.get(`/api/v1/admin/users`);
+
+      return data;
+    } catch (error) {
+      rejectWithValue(error.message);
+    }
+  }
+);
+
+// for adminDeleteUser ->>
+export const adminDeleteUser = createAsyncThunk(
+  "admin/user/delete",
+  async (userId, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(`/api/v1/admin/user/${userId}`);
 
       return data;
     } catch (error) {

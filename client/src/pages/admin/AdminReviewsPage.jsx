@@ -1,22 +1,27 @@
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { adminGetProductReviews } from "../../features/product/productSlice";
+import {
+  adminGetProductReviews,
+  deleteReset,
+  adminDeleteReview,
+} from "../../features/product/productSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { DataGrid } from "@mui/x-data-grid";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useParams } from "react-router-dom";
 import { STATUSES } from "../../utils/STATUSES";
 import Loader from "../../assets/loader.svg";
+import { ToastContainer, toast } from "react-toastify";
 
 const AdminReviewsPage = () => {
   const dispatch = useDispatch();
   const { productId } = useParams();
   const [searchInput, setSearchInput] = useState("");
-  const [keyword, setKeyword] = useState("");
 
-  const { allReviews, status } = useSelector((state) => state.product);
+  const { allReviews, status, isReviewDeleted } = useSelector(
+    (state) => state.product
+  );
 
   const rows = [];
 
@@ -25,7 +30,7 @@ const AdminReviewsPage = () => {
     allReviews.forEach((review) =>
       rows.push({
         id: review._id,
-        user: review.user.name,
+        user: review.user && review.user.name,
         comment: review.comment,
         rating: review.rating,
       })
@@ -70,14 +75,12 @@ const AdminReviewsPage = () => {
       sortable: false,
       renderCell: (params) => {
         return (
-          <div className="space-x-3">
-            <button type="button" onClick={() => {}}>
-              <EditIcon />
-            </button>
-            <button type="button" onClick={() => {}}>
-              <DeleteForeverIcon />
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => handleDeleteReview(params.row.id)}
+          >
+            <DeleteForeverIcon />
+          </button>
         );
       },
     },
@@ -85,21 +88,63 @@ const AdminReviewsPage = () => {
 
   const handleSearchReviews = (e) => {
     e.preventDefault();
-    setKeyword(searchInput);
-  };
 
-  useEffect(() => {
-    dispatch(adminGetProductReviews(productId || keyword))
+    if (!searchInput) return;
+
+    dispatch(adminGetProductReviews(searchInput))
       .then(unwrapResult)
       .then((obj) => {
         console.log({ adminProductReviewThen: obj });
         setSearchInput("");
+
+        if (obj.reviews && obj.reviews.length === 0) {
+          toast.dark("No Reviews Found!", {
+            position: "bottom-center",
+            autoClose: 3000,
+          });
+        }
       })
       .catch((obj) => console.log({ adminProductReviewCatch: obj }));
-  }, [dispatch, productId, keyword]);
+  };
+
+  const handleDeleteReview = (reviewId) => {
+    dispatch(adminDeleteReview({ reviewId, productId }))
+      .then(unwrapResult)
+      .then((obj) => {
+        console.log({ adminDeleteReviewThen: obj });
+      })
+      .catch((obj) => console.log({ adminDeleteReviewCatch: obj }));
+  };
+
+  useEffect(() => {
+    if (!productId) return;
+
+    dispatch(adminGetProductReviews(productId))
+      .then(unwrapResult)
+      .then((obj) => {
+        console.log({ adminProductReviewThen: obj });
+
+        if (obj.reviews && obj.reviews.length === 0) {
+          toast.dark("No Reviews Found!", {
+            position: "bottom-center",
+            autoClose: 3000,
+          });
+        }
+      })
+      .catch((obj) => console.log({ adminProductReviewCatch: obj }));
+
+    if (isReviewDeleted) {
+      toast.dark("Review Deleted Successfully!", {
+        position: "bottom-left",
+        autoClose: 3000,
+      });
+      dispatch(deleteReset());
+    }
+  }, [dispatch, productId, isReviewDeleted]);
 
   return (
     <main className="w-full h-full flex flex-col">
+      <ToastContainer />
       <h2 className="text-2xl lg:text-4xl flex justify-center items-center pb-5 font-semibold text-slate-600 h-[6vh]">
         {productId ? "Reviews" : "Search Reviews"}
       </h2>

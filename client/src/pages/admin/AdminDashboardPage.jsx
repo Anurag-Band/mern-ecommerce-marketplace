@@ -12,6 +12,8 @@ import Orders from "../../assets/dashboard-icons/orders.gif";
 import Users from "../../assets/dashboard-icons/users.png";
 import StockDoughnut from "../../components/admin/StockDoughnut";
 import RevenueLineChart from "../../components/admin/RevenueLineChart";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { Link } from "react-router-dom";
 
 const AdminDashboardPage = () => {
   const dispatch = useDispatch();
@@ -56,9 +58,18 @@ const AdminDashboardPage = () => {
   return (
     <div className="flex flex-col space-y-2">
       <header>
-        <h2 className="font-bold text-3xl text-slate-500 font-primary p-1">
-          Overview
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-bold text-3xl text-slate-500 font-primary p-1 ml-5">
+            Overview
+          </h2>
+          <Link
+            to={"/products"}
+            className="mr-32 space-x-2 font-medium cursor-pointer text-xl text-purple-500"
+          >
+            <span className="hidden sm:inline-block">View Your Shop</span>
+            <OpenInNewIcon />
+          </Link>
+        </div>
       </header>
       <main className="flex flex-col gap-5">
         {/* Upper Section */}

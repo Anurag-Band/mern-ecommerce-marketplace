@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, isAnyOf } from "@reduxjs/toolkit";
 import axios from "axios";
 import { STATUSES } from "../../utils/STATUSES";
 
@@ -58,7 +58,7 @@ const productSlice = createSlice({
       })
 
       //  for addReview
-      .addCase(addReview.pending, (state, action) => {
+      .addCase(addReview.pending, (state) => {
         state.status = STATUSES.LOADING;
       })
       .addCase(addReview.fulfilled, (state, action) => {
@@ -84,21 +84,6 @@ const productSlice = createSlice({
       .addCase(fetchSingleProductReviews.rejected, (state, action) => {
         state.status = STATUSES.ERROR;
         state.errorMessage = action.payload.error;
-      })
-
-      // for deleteReview->>
-      .addCase(deleteReview.pending, (state) => {
-        state.status = STATUSES.LOADING;
-      })
-      .addCase(deleteReview.fulfilled, (state, action) => {
-        state.status = STATUSES.IDLE;
-        state.statusMessage = action.payload.message;
-        state.isReviewDeleted = true;
-      })
-      .addCase(deleteReview.rejected, (state, action) => {
-        state.status = STATUSES.ERROR;
-        state.statusMessage = action.payload.error;
-        state.isReviewDeleted = false;
       })
 
       // ADMIN Reducers ->>
@@ -133,7 +118,31 @@ const productSlice = createSlice({
       .addCase(adminDeleteProduct.rejected, (state, action) => {
         state.status = STATUSES.ERROR;
         state.statusMessage = action.payload.error;
-      });
+      })
+
+      // for userDeleteReview, adminDeleteReview->>
+      .addMatcher(
+        isAnyOf(userDeleteReview.pending, adminDeleteReview.pending),
+        (state) => {
+          state.status = STATUSES.LOADING;
+        }
+      )
+      .addMatcher(
+        isAnyOf(userDeleteReview.fulfilled, adminDeleteReview.fulfilled),
+        (state, action) => {
+          state.status = STATUSES.IDLE;
+          state.statusMessage = action.payload.message;
+          state.isReviewDeleted = true;
+        }
+      )
+      .addMatcher(
+        isAnyOf(userDeleteReview.rejected, adminDeleteReview.rejected),
+        (state, action) => {
+          state.status = STATUSES.ERROR;
+          state.statusMessage = action.payload.error;
+          state.isReviewDeleted = false;
+        }
+      );
   },
 });
 
@@ -216,13 +225,13 @@ export const fetchSingleProductReviews = createAsyncThunk(
   }
 );
 
-// for deleteReview ->>
-export const deleteReview = createAsyncThunk(
-  "review/delete",
+// for UserDeleteReview ->>
+export const userDeleteReview = createAsyncThunk(
+  "user/review/delete",
   async (productId, { rejectWithValue }) => {
     try {
       const { data } = await axios.delete(
-        `/api/v1/reviews?productId=${productId}`
+        `/api/v1/review?productId=${productId}`
       );
       return data;
     } catch (error) {
@@ -246,12 +255,12 @@ export const adminGetAllProducts = createAsyncThunk(
   }
 );
 
-// for adminGetOneReview ->>
+// for adminGetProductReviews ->>
 export const adminGetProductReviews = createAsyncThunk(
-  "admin/review/fetch",
+  "admin/reviews/fetch",
   async (productId, { rejectWithValue }) => {
     try {
-      const { data } = await axios.get(`/api/v1/review?id=${productId}`);
+      const { data } = await axios.get(`/api/v1/admin/reviews?id=${productId}`);
 
       return data;
     } catch (error) {
@@ -270,6 +279,21 @@ export const adminDeleteProduct = createAsyncThunk(
       return data;
     } catch (error) {
       rejectWithValue(error.message);
+    }
+  }
+);
+
+// for adminDeleteReview ->>
+export const adminDeleteReview = createAsyncThunk(
+  "admin/review/delete",
+  async ({ reviewId, productId }, { rejectWithValue }) => {
+    try {
+      const { data } = await axios.delete(
+        `/api/v1/admin/review?reviewId=${reviewId}&productId=${productId}`
+      );
+      return data;
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
 );

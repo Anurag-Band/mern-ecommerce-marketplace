@@ -3,18 +3,18 @@ import Rating from "@mui/material/Rating";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { useDispatch, useSelector } from "react-redux";
 import { Tooltip } from "@mui/material";
-import { deleteReview } from "../../features/product/productSlice";
+import { userDeleteReview } from "../../features/product/productSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 
 const ReviewCard = ({ review, productId }) => {
   const dispatch = useDispatch();
   const { user, isAuthenticated } = useSelector((state) => state.auth);
 
-  const handleDeleteReview = () => {
-    dispatch(deleteReview(productId))
+  const handleUserDeleteReview = () => {
+    dispatch(userDeleteReview(productId))
       .then(unwrapResult)
-      .then((obj) => console.log({ deleteReviewThen: obj }))
-      .catch((obj) => console.log({ deleteReviewCatch: obj }));
+      .then((obj) => console.log({ userDeleteReviewThen: obj }))
+      .catch((obj) => console.log({ userDeleteReviewCatch: obj }));
   };
 
   return (
@@ -26,7 +26,7 @@ const ReviewCard = ({ review, productId }) => {
       />
       {isAuthenticated && user._id === review.user._id && (
         <Tooltip
-          onClick={handleDeleteReview}
+          onClick={handleUserDeleteReview}
           title="Delete Review"
           placement="left-start"
         >
