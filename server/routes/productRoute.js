@@ -9,10 +9,10 @@ const {
   adminUpdateOneProduct,
   adminDeleteOneProduct,
   addReview,
-  deleteReview,
+  userDeleteReview,
   getOnlyReviewsForOneProduct,
   adminGetProductReviews,
-  adminGetAllReviews,
+  adminDeleteReview,
 } = require("../controllers/productController");
 
 const { isUserLoggedIn, customRole } = require("../middlewares/userMiddleware");
@@ -20,17 +20,22 @@ const { isUserLoggedIn, customRole } = require("../middlewares/userMiddleware");
 // user Routes
 router.route("/products").get(getAllProducts);
 router.route("/product/:id").get(getOneProduct);
-router
-  .route("/reviews")
-  .get(getOnlyReviewsForOneProduct)
-  .delete(isUserLoggedIn, deleteReview);
+router.route("/reviews").get(getOnlyReviewsForOneProduct);
 
 router
   .route("/review")
-  .get(isUserLoggedIn, customRole("admin"), adminGetProductReviews)
-  .put(isUserLoggedIn, addReview);
+  .put(isUserLoggedIn, addReview)
+  .delete(isUserLoggedIn, userDeleteReview);
 
 // Admin ONLY Routes
+router
+  .route("/admin/reviews")
+  .get(isUserLoggedIn, customRole("admin"), adminGetProductReviews);
+
+router
+  .route("/admin/review")
+  .delete(isUserLoggedIn, customRole("admin"), adminDeleteReview);
+
 router
   .route("/admin/product/new")
   .post(isUserLoggedIn, customRole("admin"), adminAddProduct);

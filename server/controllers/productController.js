@@ -89,7 +89,7 @@ exports.addReview = BigPromise(async (req, res, next) => {
   });
 });
 
-exports.deleteReview = BigPromise(async (req, res, next) => {
+exports.userDeleteReview = BigPromise(async (req, res, next) => {
   const { productId } = req.query;
 
   const product = await Product.findById(productId);
@@ -150,7 +150,8 @@ exports.getOnlyReviewsForOneProduct = BigPromise(async (req, res, next) => {
   });
 });
 
-// ADMIN Get All Reviews of a product
+// admin ONLY controllers
+
 exports.adminGetProductReviews = BigPromise(async (req, res, next) => {
   const product = await Product.findById(req.query.id).populate(
     "reviews.user",
@@ -167,7 +168,53 @@ exports.adminGetProductReviews = BigPromise(async (req, res, next) => {
   });
 });
 
-// admin ONLY controllers
+exports.adminDeleteReview = BigPromise(async (req, res, next) => {
+  const product = await Product.findById(req.query.productId);
+
+  if (!product) {
+    return next(new CustomError("Product not Found", 404));
+  }
+
+  const reviews = product.reviews.filter(
+    (review) => review._id.toString() !== req.query.reviewId.toString()
+  );
+
+  // adjust ratings
+  let avg = 0;
+
+  reviews.forEach((rev) => {
+    avg += rev.rating;
+  });
+
+  let ratings = 0;
+
+  if (reviews.length === 0) {
+    ratings = 0;
+  } else {
+    ratings = avg / reviews.length;
+  }
+  const numOfReviews = reviews.length;
+
+  await Product.findByIdAndUpdate(
+    req.query.productId,
+    {
+      reviews,
+      ratings,
+      numOfReviews,
+    },
+    {
+      new: true,
+      runValidators: true,
+      useFindAndModify: false,
+    }
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Review is Deleted Successfully!!!",
+  });
+});
+
 exports.adminAddProduct = BigPromise(async (req, res, next) => {
   const imageArray = [];
 
