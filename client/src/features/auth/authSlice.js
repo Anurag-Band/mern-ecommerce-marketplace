@@ -138,10 +138,11 @@ const authSlice = createSlice({
       )
       .addMatcher(
         isAnyOf(loginUser.rejected, registerUser.rejected, loadUser.rejected),
-        (state) => {
+        (state, action) => {
           state.status = STATUSES.ERROR;
           state.user = null;
           state.isAuthenticated = false;
+          state.statusMessage = action.payload.error;
         }
       );
   },

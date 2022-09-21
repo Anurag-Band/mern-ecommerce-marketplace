@@ -81,7 +81,7 @@ const LogInPage = () => {
             >
               Forgot Password ?
             </Link>
-            {status === STATUSES.ERROR && (
+            {statusMessage && (
               <h3 className="text-red-500 text-sm md:text-lg font-medium">
                 Error : {statusMessage}
               </h3>
